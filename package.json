@@ -1,0 +1,24 @@
+{
+  "name": "stellog-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "concurrently \"cd backend && tsc -w\" \"cd backend && nodemon dist/index.js\"",
+    "start:frontend": "concurrently \"cd frontend && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JMC50/stellog-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JMC50/stellog-demo/issues"
+  },
+  "homepage": "https://github.com/JMC50/stellog-demo#readme"
+}

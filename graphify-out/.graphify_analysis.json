@@ -1,0 +1,315 @@
+{
+  "communities": {
+    "0": [
+      "eslint",
+      "eslint_config_prettier",
+      "eslint_js",
+      "eslint_plugin_svelte",
+      "frontend_package_devdependencies",
+      "frontend_package_devdependencies_eslint",
+      "frontend_package_devdependencies_eslint_config_prettier",
+      "frontend_package_devdependencies_eslint_js",
+      "frontend_package_devdependencies_eslint_plugin_svelte",
+      "frontend_package_devdependencies_globals",
+      "frontend_package_devdependencies_prettier",
+      "frontend_package_devdependencies_prettier_plugin_svelte",
+      "frontend_package_devdependencies_svelte",
+      "frontend_package_devdependencies_svelte_check",
+      "frontend_package_devdependencies_sveltejs_adapter_auto",
+      "frontend_package_devdependencies_sveltejs_kit",
+      "frontend_package_devdependencies_sveltejs_vite_plugin_svelte",
+      "frontend_package_devdependencies_types_node",
+      "frontend_package_devdependencies_typescript",
+      "frontend_package_devdependencies_typescript_eslint",
+      "frontend_package_devdependencies_vite",
+      "globals",
+      "prettier",
+      "prettier_plugin_svelte",
+      "svelte",
+      "svelte_check",
+      "sveltejs_adapter_auto",
+      "sveltejs_kit",
+      "sveltejs_vite_plugin_svelte",
+      "types_node",
+      "typescript",
+      "typescript_eslint",
+      "vite"
+    ],
+    "1": [
+      "package",
+      "package_author",
+      "package_bugs",
+      "package_bugs_url",
+      "package_description",
+      "package_homepage",
+      "package_keywords",
+      "package_license",
+      "package_main",
+      "package_name",
+      "package_repository",
+      "package_repository_type",
+      "package_repository_url",
+      "package_type",
+      "package_version"
+    ],
+    "2": [
+      "frontend_package",
+      "frontend_package_name",
+      "frontend_package_private",
+      "frontend_package_scripts",
+      "frontend_package_scripts_build",
+      "frontend_package_scripts_check",
+      "frontend_package_scripts_check_watch",
+      "frontend_package_scripts_dev",
+      "frontend_package_scripts_format",
+      "frontend_package_scripts_lint",
+      "frontend_package_scripts_prepare",
+      "frontend_package_scripts_preview",
+      "frontend_package_type",
+      "frontend_package_version"
+    ],
+    "3": [
+      "frontend_tsconfig",
+      "frontend_tsconfig_compileroptions",
+      "frontend_tsconfig_compileroptions_allowjs",
+      "frontend_tsconfig_compileroptions_checkjs",
+      "frontend_tsconfig_compileroptions_esmoduleinterop",
+      "frontend_tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "frontend_tsconfig_compileroptions_moduleresolution",
+      "frontend_tsconfig_compileroptions_resolvejsonmodule",
+      "frontend_tsconfig_compileroptions_rewriterelativeimportextensions",
+      "frontend_tsconfig_compileroptions_skiplibcheck",
+      "frontend_tsconfig_compileroptions_sourcemap",
+      "frontend_tsconfig_compileroptions_strict",
+      "frontend_tsconfig_extends",
+      "ref_svelte_kit_tsconfig_json"
+    ],
+    "4": [
+      "frontend_src_lib_components_infodetail",
+      "frontend_src_lib_components_loginscreen",
+      "frontend_src_lib_components_stellargrid",
+      "frontend_src_lib_data_dummy",
+      "frontend_src_lib_data_dummy_dummystreamerinfo",
+      "frontend_src_lib_data_dummy_fetchstreamerinfo",
+      "frontend_src_lib_data_stellars",
+      "frontend_src_lib_data_stellars_stellars",
+      "frontend_src_lib_types",
+      "frontend_src_lib_types_stellarprofile",
+      "frontend_src_lib_types_streamerinfo",
+      "frontend_src_routes_page"
+    ],
+    "5": [
+      "backend_tsconfig",
+      "backend_tsconfig_compileroptions",
+      "backend_tsconfig_compileroptions_esmoduleinterop",
+      "backend_tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "backend_tsconfig_compileroptions_module",
+      "backend_tsconfig_compileroptions_outdir",
+      "backend_tsconfig_compileroptions_resolvejsonmodule",
+      "backend_tsconfig_compileroptions_rootdir",
+      "backend_tsconfig_compileroptions_skiplibcheck",
+      "backend_tsconfig_compileroptions_strict",
+      "backend_tsconfig_compileroptions_target"
+    ],
+    "6": [
+      "backend_package",
+      "backend_package_dependencies",
+      "backend_package_dependencies_express",
+      "backend_package_dependencies_types_express",
+      "express",
+      "types_express"
+    ],
+    "7": [
+      "frontend_readme",
+      "frontend_src_app",
+      "frontend_static_images_stellars_akane_lize",
+      "stellog_demo",
+      "svelte_kit"
+    ],
+    "8": [
+      "package_scripts",
+      "package_scripts_start",
+      "package_scripts_start_backend",
+      "package_scripts_start_frontend",
+      "package_scripts_test"
+    ],
+    "9": [
+      "c_codespace_stellog_demo_frontend_src_app_css",
+      "c_codespace_stellog_demo_frontend_src_lib_assets_favicon_svg",
+      "frontend_src_routes_layout"
+    ],
+    "10": [
+      "backend_src_index",
+      "backend_src_index_app"
+    ],
+    "11": [
+      "frontend_eslint_config",
+      "frontend_eslint_config_gitignorepath"
+    ],
+    "12": [
+      "frontend_prettier_config",
+      "frontend_prettier_config_config"
+    ],
+    "13": [
+      "frontend_src_app_d",
+      "frontend_src_app_d_app"
+    ],
+    "14": [
+      "frontend_src_lib_assets_favicon"
+    ],
+    "15": [
+      "frontend_src_lib_index"
+    ],
+    "16": [
+      "frontend_static_images_stellars_aokumo_rin"
+    ],
+    "17": [
+      "frontend_static_images_stellars_arahashi_tabi"
+    ],
+    "18": [
+      "frontend_static_images_stellars_ayatsuno_yuni"
+    ],
+    "19": [
+      "frontend_static_images_stellars_gangzi"
+    ],
+    "20": [
+      "frontend_static_images_stellars_hanako_nana"
+    ],
+    "21": [
+      "frontend_static_images_stellars_neneko_mashiro"
+    ],
+    "22": [
+      "frontend_static_images_stellars_sakihane_huya"
+    ],
+    "23": [
+      "frontend_static_images_stellars_shirayuki_hina"
+    ],
+    "24": [
+      "frontend_static_images_stellars_tenko_shibuki"
+    ],
+    "25": [
+      "frontend_static_images_stellars_yuzuha_riko"
+    ],
+    "26": [
+      "frontend_static_robots"
+    ],
+    "27": [
+      "frontend_vite_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06060606060606061,
+    "1": 0.13333333333333333,
+    "2": 0.14285714285714285,
+    "3": 0.14285714285714285,
+    "4": 0.2727272727272727,
+    "5": 0.18181818181818182,
+    "6": 0.3333333333333333,
+    "7": 0.4,
+    "8": 0.4,
+    "9": 0.6666666666666666,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0
+  },
+  "gods": [
+    {
+      "id": "frontend_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 11
+    },
+    {
+      "id": "backend_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 10
+    },
+    {
+      "id": "frontend_package_scripts",
+      "label": "scripts",
+      "degree": 9
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 5
+    },
+    {
+      "id": "package_repository",
+      "label": "repository",
+      "degree": 3
+    },
+    {
+      "id": "backend_package_dependencies_types_express",
+      "label": "@types/express",
+      "degree": 2
+    },
+    {
+      "id": "backend_package_dependencies_express",
+      "label": "express",
+      "degree": 2
+    },
+    {
+      "id": "frontend_package_devdependencies_eslint_js",
+      "label": "@eslint/js",
+      "degree": 2
+    },
+    {
+      "id": "frontend_package_devdependencies_sveltejs_adapter_auto",
+      "label": "@sveltejs/adapter-auto",
+      "degree": 2
+    },
+    {
+      "id": "frontend_package_devdependencies_sveltejs_kit",
+      "label": "@sveltejs/kit",
+      "degree": 2
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `devDependencies` connect `Frontend Development Dependencies` to `Frontend NPM Scripts`?",
+      "why": "High betweenness centrality (0.097) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `@types/express`, `express`, `app` to the rest of the system?",
+      "why": "89 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Frontend Development Dependencies` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Package Metadata` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Frontend NPM Scripts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Frontend TypeScript Configuration` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

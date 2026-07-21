@@ -1,0 +1,1 @@
+{"nodes": [{"id": "frontend_readme", "label": "Frontend README", "file_type": "document", "source_file": "frontend/README.md"}], "edges": [{"source": "frontend_readme", "target": "svelte_kit", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "frontend/README.md"}], "hyperedges": []}

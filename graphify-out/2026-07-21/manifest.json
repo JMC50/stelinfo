@@ -1,0 +1,177 @@
+{
+  "backend/package.json": {
+    "mtime": 1784594309.3128867,
+    "ast_hash": "5cdd6807208520c4d4c3c0368565600a",
+    "semantic_hash": "5cdd6807208520c4d4c3c0368565600a"
+  },
+  "backend/src/index.ts": {
+    "mtime": 1784594383.938066,
+    "ast_hash": "fa82fe035a82f74c5bb8502626f91a8d",
+    "semantic_hash": "fa82fe035a82f74c5bb8502626f91a8d"
+  },
+  "backend/tsconfig.json": {
+    "mtime": 1784594422.8015704,
+    "ast_hash": "33d2b65029ec0d5555865a8c8b5b3039",
+    "semantic_hash": "33d2b65029ec0d5555865a8c8b5b3039"
+  },
+  "frontend/.vscode/extensions.json": {
+    "mtime": 1784594197.393945,
+    "ast_hash": "7ea92a95edaa521fbff06f607dd92e43",
+    "semantic_hash": "7ea92a95edaa521fbff06f607dd92e43"
+  },
+  "frontend/eslint.config.js": {
+    "mtime": 1784594197.40133,
+    "ast_hash": "321298f6b69d110fd60302b48a8f9252",
+    "semantic_hash": "321298f6b69d110fd60302b48a8f9252"
+  },
+  "frontend/package.json": {
+    "mtime": 1784594187.5383084,
+    "ast_hash": "f6cac13d68118e2c4cf3738a1a57d122",
+    "semantic_hash": "f6cac13d68118e2c4cf3738a1a57d122"
+  },
+  "frontend/prettier.config.js": {
+    "mtime": 1784594187.5134354,
+    "ast_hash": "8e20d302985b1ae15bcb1de36146a430",
+    "semantic_hash": "8e20d302985b1ae15bcb1de36146a430"
+  },
+  "frontend/src/app.d.ts": {
+    "mtime": 1784594185.5896876,
+    "ast_hash": "78b56494b3f78d7f9bacda13678f159e",
+    "semantic_hash": "78b56494b3f78d7f9bacda13678f159e"
+  },
+  "frontend/src/lib/components/InfoDetail.svelte": {
+    "mtime": 1784596906.6611872,
+    "ast_hash": "db61c5bc4f33701ad18959df5f8c0bd7",
+    "semantic_hash": "db61c5bc4f33701ad18959df5f8c0bd7"
+  },
+  "frontend/src/lib/components/LoginScreen.svelte": {
+    "mtime": 1784596006.2262523,
+    "ast_hash": "ecb50df54e97cad03de8c3c1c5257a5e",
+    "semantic_hash": "ecb50df54e97cad03de8c3c1c5257a5e"
+  },
+  "frontend/src/lib/components/StellarGrid.svelte": {
+    "mtime": 1784596024.842414,
+    "ast_hash": "c69bbd8475f75cedba250554dc5c9f6d",
+    "semantic_hash": "c69bbd8475f75cedba250554dc5c9f6d"
+  },
+  "frontend/src/lib/data/dummy.ts": {
+    "mtime": 1784596583.716427,
+    "ast_hash": "3314037502753ca4917365954013f5f4",
+    "semantic_hash": "3314037502753ca4917365954013f5f4"
+  },
+  "frontend/src/lib/data/stellars.ts": {
+    "mtime": 1784595952.998207,
+    "ast_hash": "b59448d44a5534092056005bc4407e8d",
+    "semantic_hash": "b59448d44a5534092056005bc4407e8d"
+  },
+  "frontend/src/lib/index.ts": {
+    "mtime": 1784594185.5901875,
+    "ast_hash": "ffcb0e97b69eb555d5739e9efe961ca0",
+    "semantic_hash": "ffcb0e97b69eb555d5739e9efe961ca0"
+  },
+  "frontend/src/lib/types.ts": {
+    "mtime": 1784595942.2355862,
+    "ast_hash": "e864b33ce95abec7b6341a6754bd6b6d",
+    "semantic_hash": "e864b33ce95abec7b6341a6754bd6b6d"
+  },
+  "frontend/src/routes/+layout.svelte": {
+    "mtime": 1784596047.562916,
+    "ast_hash": "e5271b2ac42acce74822edc757b1a876",
+    "semantic_hash": "e5271b2ac42acce74822edc757b1a876"
+  },
+  "frontend/src/routes/+page.svelte": {
+    "mtime": 1784596087.6272545,
+    "ast_hash": "0f233715d2bb84f1feaaecd77c72a52c",
+    "semantic_hash": "0f233715d2bb84f1feaaecd77c72a52c"
+  },
+  "frontend/tsconfig.json": {
+    "mtime": 1784594185.5921936,
+    "ast_hash": "c610e6d5aeb2c3bcf0b9f1b90599250e",
+    "semantic_hash": "c610e6d5aeb2c3bcf0b9f1b90599250e"
+  },
+  "frontend/vite.config.ts": {
+    "mtime": 1784594185.592694,
+    "ast_hash": "6b60842ed1635da20d3f88552f078722",
+    "semantic_hash": "6b60842ed1635da20d3f88552f078722"
+  },
+  "package.json": {
+    "mtime": 1784594599.957962,
+    "ast_hash": "3f54ddb749db126d0811fdce98574e86",
+    "semantic_hash": "3f54ddb749db126d0811fdce98574e86"
+  },
+  "frontend/README.md": {
+    "mtime": 1784594187.5395885,
+    "ast_hash": "5fa6bed7543c601a8a7b1c0d1a5a79fb",
+    "semantic_hash": "5fa6bed7543c601a8a7b1c0d1a5a79fb"
+  },
+  "frontend/src/app.html": {
+    "mtime": 1784595989.5481405,
+    "ast_hash": "0c395ac44994b04902d7e26e09a7185e",
+    "semantic_hash": "0c395ac44994b04902d7e26e09a7185e"
+  },
+  "frontend/static/robots.txt": {
+    "mtime": 1784594076.0098698,
+    "ast_hash": "d2ab914a1820906bd49451cb0a108119",
+    "semantic_hash": "d2ab914a1820906bd49451cb0a108119"
+  },
+  "frontend/src/lib/assets/favicon.svg": {
+    "mtime": 1784594076.0002692,
+    "ast_hash": "a0d1b540c1b9a2a920d5f6cae983118a",
+    "semantic_hash": "a0d1b540c1b9a2a920d5f6cae983118a"
+  },
+  "frontend/static/images/stellars/Akane_lize.webp": {
+    "mtime": 1777897469.299903,
+    "ast_hash": "71e9563f1346e480c94d21222d082ddc",
+    "semantic_hash": "71e9563f1346e480c94d21222d082ddc"
+  },
+  "frontend/static/images/stellars/Aokumo_rin.webp": {
+    "mtime": 1777897452.9604964,
+    "ast_hash": "6a5f82a8ebb2fca2812a343d1adc5db9",
+    "semantic_hash": "6a5f82a8ebb2fca2812a343d1adc5db9"
+  },
+  "frontend/static/images/stellars/Arahashi_tabi.webp": {
+    "mtime": 1777897487.4901183,
+    "ast_hash": "dab8e8ada267b1af91ad9c8c8d67b889",
+    "semantic_hash": "dab8e8ada267b1af91ad9c8c8d67b889"
+  },
+  "frontend/static/images/stellars/Ayatsuno_yuni.webp": {
+    "mtime": 1777897372.3566542,
+    "ast_hash": "d73db9fd577b0677df486743b4b31e3d",
+    "semantic_hash": "d73db9fd577b0677df486743b4b31e3d"
+  },
+  "frontend/static/images/stellars/Gangzi.webp": {
+    "mtime": 1777897073.577398,
+    "ast_hash": "292509cee7ae4e06924edab0d2fdb27e",
+    "semantic_hash": "292509cee7ae4e06924edab0d2fdb27e"
+  },
+  "frontend/static/images/stellars/Hanako_nana.webp": {
+    "mtime": 1777897442.5541291,
+    "ast_hash": "40fa38d1e643b24c27dfd54528c9fa44",
+    "semantic_hash": "40fa38d1e643b24c27dfd54528c9fa44"
+  },
+  "frontend/static/images/stellars/Neneko_mashiro.webp": {
+    "mtime": 1777897478.3915946,
+    "ast_hash": "38f0ee4ba5c57dc3044cb1ac6befd844",
+    "semantic_hash": "38f0ee4ba5c57dc3044cb1ac6befd844"
+  },
+  "frontend/static/images/stellars/Sakihane_huya.webp": {
+    "mtime": 1777897524.430714,
+    "ast_hash": "bbddea88ea5a57c6b3f4f61cb228a1d6",
+    "semantic_hash": "bbddea88ea5a57c6b3f4f61cb228a1d6"
+  },
+  "frontend/static/images/stellars/Shirayuki_hina.webp": {
+    "mtime": 1777897436.3461947,
+    "ast_hash": "e1dc7cafc66d8317c3b79ec4d1279e9d",
+    "semantic_hash": "e1dc7cafc66d8317c3b79ec4d1279e9d"
+  },
+  "frontend/static/images/stellars/Tenko_shibuki.webp": {
+    "mtime": 1777897427.1825275,
+    "ast_hash": "5d2141d926050329acb3ba105bf2b5a1",
+    "semantic_hash": "5d2141d926050329acb3ba105bf2b5a1"
+  },
+  "frontend/static/images/stellars/Yuzuha_riko.webp": {
+    "mtime": 1777897504.6507733,
+    "ast_hash": "71b25ac1e9cbb62a75701e5a29719277",
+    "semantic_hash": "71b25ac1e9cbb62a75701e5a29719277"
+  }
+}
