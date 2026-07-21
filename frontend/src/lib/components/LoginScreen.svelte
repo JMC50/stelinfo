@@ -20,31 +20,60 @@
 	// before the real container size is known.
 	const FALLBACK_W = 340;
 	const FALLBACK_H = 280;
-	const GAP = 12;
+	const GAP = 8;
 
-	function scatterPosition(
+	// Finds the best available spot for a circle of the given size: cheap
+	// random sampling first, then an exhaustive grid scan that is guaranteed
+	// to find a fully clear spot if one exists anywhere on the canvas (random
+	// sampling alone can miss it on a small/crowded canvas). If no spot
+	// clears the required gap, it still returns whichever candidate had the
+	// most breathing room, so overlap is minimized rather than left to luck.
+	function findSpot(
 		size: number,
 		canvasW: number,
 		canvasH: number,
 		placed: { cx: number; cy: number; size: number }[]
-	): { cx: number; cy: number } {
-		for (let attempt = 0; attempt < 60; attempt++) {
-			const cx = size / 2 + Math.random() * (canvasW - size);
-			const cy = size / 2 + Math.random() * (canvasH - size);
-			const fits = placed.every((p) => {
-				const dx = p.cx - cx;
-				const dy = p.cy - cy;
-				const minDist = p.size / 2 + size / 2 + GAP;
-				return dx * dx + dy * dy >= minDist * minDist;
-			});
-			if (fits) return { cx, cy };
+	): { cx: number; cy: number; gap: number } {
+		const gapAt = (cx: number, cy: number) =>
+			placed.reduce((acc, p) => {
+				const dist = Math.hypot(p.cx - cx, p.cy - cy) - p.size / 2 - size / 2;
+				return Math.min(acc, dist);
+			}, Infinity);
+
+		for (let attempt = 0; attempt < 80; attempt++) {
+			const cx = size / 2 + Math.random() * Math.max(1, canvasW - size);
+			const cy = size / 2 + Math.random() * Math.max(1, canvasH - size);
+			if (gapAt(cx, cy) >= GAP) return { cx, cy, gap: GAP };
 		}
-		// Ran out of attempts (canvas is crowded): place anywhere in bounds
-		// rather than skipping the stellar entirely.
-		return {
-			cx: size / 2 + Math.random() * (canvasW - size),
-			cy: size / 2 + Math.random() * (canvasH - size)
-		};
+
+		let best = { cx: canvasW / 2, cy: canvasH / 2, gap: -Infinity };
+		const step = Math.max(3, size / 8);
+		for (let y = size / 2; y <= canvasH - size / 2; y += step) {
+			for (let x = size / 2; x <= canvasW - size / 2; x += step) {
+				const gap = gapAt(x, y);
+				if (gap > best.gap) best = { cx: x, cy: y, gap };
+				if (gap >= GAP) return best;
+			}
+		}
+		return best;
+	}
+
+	// Tries the avatar at full size first, then shrinks it in steps until it
+	// finds a spot with a clean gap — a smaller avatar beats an overlapping one.
+	function scatterPosition(
+		baseSize: number,
+		canvasW: number,
+		canvasH: number,
+		placed: { cx: number; cy: number; size: number }[]
+	): { cx: number; cy: number; size: number } {
+		const sizeSteps = [baseSize, baseSize * 0.85, baseSize * 0.7, baseSize * 0.55];
+		let fallback = { cx: canvasW / 2, cy: canvasH / 2, size: sizeSteps[sizeSteps.length - 1] };
+		for (const size of sizeSteps) {
+			const spot = findSpot(size, canvasW, canvasH, placed);
+			if (spot.gap >= GAP) return { cx: spot.cx, cy: spot.cy, size };
+			fallback = { cx: spot.cx, cy: spot.cy, size };
+		}
+		return fallback;
 	}
 
 	function buildOrbitItems(
@@ -58,13 +87,15 @@
 		const placed: { cx: number; cy: number; size: number }[] = [];
 
 		return ordered.map((stellar, i) => {
-			const size = randomize ? 46 + Math.round(Math.random() * 20) : 56;
 			let cx: number;
 			let cy: number;
+			let size: number;
 			if (randomize) {
-				({ cx, cy } = scatterPosition(size, canvasW, canvasH, placed));
+				const baseSize = 32 + Math.round(Math.random() * 16);
+				({ cx, cy, size } = scatterPosition(baseSize, canvasW, canvasH, placed));
 			} else {
 				// Deterministic grid for the SSR-rendered first paint.
+				size = 40;
 				const col = i % cols;
 				const row = Math.floor(i / cols);
 				cx = (col + 0.5) * (canvasW / cols);

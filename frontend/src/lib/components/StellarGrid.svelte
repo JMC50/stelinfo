@@ -4,10 +4,12 @@
 	let {
 		stellars,
 		onSelect,
+		onLogout,
 		loadingId
 	}: {
 		stellars: StellarProfile[];
 		onSelect: (id: string) => void;
+		onLogout: () => void;
 		loadingId: string | null;
 	} = $props();
 
@@ -16,6 +18,7 @@
 
 <section class="select-screen">
 	<header class="select-header">
+		<button class="logout-btn" onclick={onLogout}>로그아웃</button>
 		<div class="user-chip">
 			<div class="user-avatar">파</div>
 			<div class="user-text">
@@ -50,6 +53,31 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.select-header {
+		position: relative;
+	}
+
+	.logout-btn {
+		position: absolute;
+		top: 0;
+		right: 0;
+		background: var(--color-surface);
+		border: none;
+		border-radius: 999px;
+		padding: 8px 14px;
+		font-size: 11px;
+		font-weight: 600;
+		color: var(--color-text-muted);
+		box-shadow: var(--shadow-soft);
+		cursor: pointer;
+		opacity: 0;
+		animation: fade-up 0.3s ease-out 0ms both;
+	}
+
+	.logout-btn:active {
+		transform: scale(0.96);
 	}
 
 	.user-chip {
@@ -202,6 +230,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.logout-btn,
 		.user-chip,
 		.select-header h1,
 		.select-desc,

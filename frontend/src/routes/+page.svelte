@@ -32,13 +32,20 @@
 		info = null;
 		selectedId = null;
 	}
+
+	function handleLogout() {
+		screen = 'login';
+		selectedId = null;
+		loadingId = null;
+		info = null;
+	}
 </script>
 
 <main class="app-shell">
 	{#if screen === 'login'}
 		<LoginScreen onLogin={handleLogin} />
 	{:else if screen === 'select'}
-		<StellarGrid {stellars} onSelect={selectStellar} {loadingId} />
+		<StellarGrid {stellars} onSelect={selectStellar} onLogout={handleLogout} {loadingId} />
 	{:else if screen === 'detail' && info && selectedStellar}
 		<InfoDetail {info} image={selectedStellar.image} onBack={backToGrid} />
 	{/if}
