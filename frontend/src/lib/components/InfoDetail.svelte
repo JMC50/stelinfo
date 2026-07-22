@@ -508,6 +508,8 @@
 		background: var(--color-bg-soft);
 		box-shadow: 0 4px 12px rgba(134, 127, 219, 0.12);
 		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+		-webkit-touch-callout: none;
 	}
 
 	.video-card:disabled {
