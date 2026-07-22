@@ -1,13 +1,15 @@
 <script lang="ts">
-	import type { StellarProfile } from '$lib/types';
+	import type { ChzzkUser, StellarProfile } from '$lib/types';
 
 	let {
 		stellars,
+		user,
 		onSelect,
 		onLogout,
 		loadingId
 	}: {
 		stellars: StellarProfile[];
+		user: ChzzkUser;
 		onSelect: (id: string) => void;
 		onLogout: () => void;
 		loadingId: string | null;
@@ -20,15 +22,15 @@
 	<header class="select-header">
 		<button class="logout-btn" onclick={onLogout}>로그아웃</button>
 		<div class="user-chip">
-			<div class="user-avatar">파</div>
+			<div class="user-avatar">{user.channelName.charAt(0)}</div>
 			<div class="user-text">
 				<p class="user-hello">안녕하세요 👋</p>
-				<p class="user-name">치지직 유저님</p>
+				<p class="user-name">{user.channelName}님</p>
 			</div>
 			<span class="connected-badge">연동됨</span>
 		</div>
 		<h1>확인할 스텔라를 선택해주세요</h1>
-		<p class="select-desc">선택한 스텔라와의 팔로우・구독 기록을 보여드려요.</p>
+		<p class="select-desc">선택한 스텔라와의 팔로우・구독 기록과 정보를 보여드려요.</p>
 	</header>
 
 	<div class="stellar-grid">
@@ -166,6 +168,8 @@
 		opacity: 0;
 		animation: fade-up 0.32s ease-out both;
 		animation-delay: calc(150ms + var(--delay, 0ms));
+		-webkit-tap-highlight-color: transparent;
+		-webkit-touch-callout: none;
 	}
 
 	.stellar-tile:disabled {
@@ -181,11 +185,37 @@
 		padding: 3px;
 		background: linear-gradient(160deg, var(--tile-color), var(--color-bg-soft));
 		box-shadow: 0 6px 16px rgba(134, 127, 219, 0.16);
-		transition: transform 0.15s ease;
 	}
 
-	.stellar-tile:active .tile-avatar {
-		transform: scale(0.94);
+	/* Personal-color sparkle burst, shown together with the loading spinner
+	   once a tap actually selects this stellar — standing in for the default
+	   mobile tap highlight (disabled above via -webkit-tap-highlight-color).
+	   Uses ::before so it doesn't collide with the ::after loading spinner. */
+	.tile-avatar::before {
+		content: '';
+		position: absolute;
+		inset: -35%;
+		z-index: -1;
+		border-radius: 50%;
+		background: radial-gradient(circle, var(--tile-color) 0%, transparent 70%);
+		opacity: 0;
+		transform: scale(0.5);
+		pointer-events: none;
+	}
+
+	.tile-avatar.is-loading::before {
+		animation: tile-sparkle 0.9s ease-out infinite;
+	}
+
+	@keyframes tile-sparkle {
+		0% {
+			opacity: 0.75;
+			transform: scale(0.5);
+		}
+		100% {
+			opacity: 0;
+			transform: scale(1.4);
+		}
 	}
 
 	.tile-avatar img {

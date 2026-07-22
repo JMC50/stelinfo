@@ -1,5 +1,5 @@
 {
-  "name": "stellog-demo",
+  "name": "stelinfo",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JMC50/stellog-demo.git"
+    "url": "git+https://github.com/JMC50/stelinfo.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/JMC50/stellog-demo/issues"
+    "url": "https://github.com/JMC50/stelinfo/issues"
   },
-  "homepage": "https://github.com/JMC50/stellog-demo#readme"
+  "homepage": "https://github.com/JMC50/stelinfo#readme"
 }

@@ -2,8 +2,7 @@
 	import { tick, onDestroy } from 'svelte';
 	import type { StellarProfile } from '$lib/types';
 	import { stellars } from '$lib/data/stellars';
-
-	let { onLogin }: { onLogin: () => void } = $props();
+	import { PUBLIC_LOGIN_URL } from '$env/static/public';
 
 	let loggingIn = $state(false);
 
@@ -157,25 +156,126 @@
 	const DRAW_DELAY = 0.4;
 	const DRAW_DURATION = 2.6;
 
-	// A single rAF loop drives both the draw-on line and each avatar's float
-	// bob from the same clock, and rewrites the polyline's points every frame
-	// from the avatars' live offsets. That's the only way the line's vertices
-	// can stay glued to the avatars even *while* the line is still being
-	// drawn — a CSS transition has no way to know about a separate CSS
-	// animation's current position, so driving both from one JS source is
-	// what keeps them in lockstep at every instant, not just once settled.
+	// Press-and-drag physics for each avatar: `x`/`y` is the live offset from
+	// the avatar's laid-out (cx, cy) spot, `vx`/`vy` its velocity in px/frame.
+	// Kept as a plain (non-reactive) array — like the float bob below, it's
+	// driven imperatively from the rAF loop for performance, not through
+	// Svelte state.
+	interface Physics {
+		x: number;
+		y: number;
+		vx: number;
+		vy: number;
+		dragging: boolean;
+	}
+	let physics: Physics[] = [];
+	const FRICTION = 0.95;
+	const BOUNCE_DAMPING = 0.2;
+	const MIN_VELOCITY = 0.03;
+	const MAX_VELOCITY = 45;
+	// How much a single pointermove sample can shift the tracked velocity.
+	// Low, so one jumpy/low-dt sample right before release can't fling the
+	// avatar off at an unrealistic speed — velocity instead reflects the
+	// gesture's overall speed rather than its last instant.
+	const VELOCITY_SMOOTHING = 0.25;
+	// If the pointer has been still this long (ms) when it's released, treat
+	// it as "placed" rather than "thrown".
+	const STILL_THRESHOLD_MS = 80;
+
+	function resetPhysics(count: number) {
+		physics = Array.from({ length: count }, () => ({
+			x: 0,
+			y: 0,
+			vx: 0,
+			vy: 0,
+			dragging: false
+		}));
+	}
+	resetPhysics(stellars.length);
+
+	// Tracks the single in-progress pointer drag, if any. Pointer capture
+	// (see handlePointerDown) guarantees move/up events for this pointerId
+	// keep arriving on the same element even once the finger/cursor leaves it.
+	let dragState: { pointerId: number; index: number; lastX: number; lastY: number; lastT: number } | null =
+		null;
+
+	function handlePointerDown(i: number, e: PointerEvent) {
+		const el = e.currentTarget as HTMLElement;
+		el.setPointerCapture(e.pointerId);
+		el.parentElement?.classList.add('is-dragging');
+		const p = physics[i];
+		p.dragging = true;
+		p.vx = 0;
+		p.vy = 0;
+		dragState = { pointerId: e.pointerId, index: i, lastX: e.clientX, lastY: e.clientY, lastT: performance.now() };
+		e.preventDefault();
+	}
+
+	function handlePointerMove(e: PointerEvent) {
+		if (!dragState || e.pointerId !== dragState.pointerId) return;
+		const p = physics[dragState.index];
+		const now = performance.now();
+		const dt = Math.max(1, now - dragState.lastT);
+		const dx = e.clientX - dragState.lastX;
+		const dy = e.clientY - dragState.lastY;
+		p.x += dx;
+		p.y += dy;
+		// Blend each sample into a running velocity estimate (in roughly
+		// px/frame at ~60fps) instead of overwriting it — smooths out the
+		// jittery per-event timing of pointermove so the throw reflects the
+		// overall gesture speed, not whatever the single last sample was.
+		const instVx = (dx / dt) * 16.6;
+		const instVy = (dy / dt) * 16.6;
+		p.vx = p.vx + (instVx - p.vx) * VELOCITY_SMOOTHING;
+		p.vy = p.vy + (instVy - p.vy) * VELOCITY_SMOOTHING;
+		dragState.lastX = e.clientX;
+		dragState.lastY = e.clientY;
+		dragState.lastT = now;
+		e.preventDefault();
+	}
+
+	function handlePointerUp(e: PointerEvent) {
+		if (!dragState || e.pointerId !== dragState.pointerId) return;
+		(e.currentTarget as HTMLElement).parentElement?.classList.remove('is-dragging');
+		const p = physics[dragState.index];
+		p.dragging = false;
+
+		// No pointermove fires while the pointer sits still, so lastT stays
+		// at the time of the last *actual* movement. If that was a while
+		// ago, the user paused in place before lifting — drop the stale
+		// velocity from the earlier motion instead of flinging it.
+		const idleMs = performance.now() - dragState.lastT;
+		if (idleMs > STILL_THRESHOLD_MS) {
+			p.vx = 0;
+			p.vy = 0;
+		} else {
+			// Cap the release speed so one erratic pointermove sample can't
+			// send the avatar flying unrealistically far.
+			const speed = Math.hypot(p.vx, p.vy);
+			if (speed > MAX_VELOCITY) {
+				const scale = MAX_VELOCITY / speed;
+				p.vx *= scale;
+				p.vy *= scale;
+			}
+		}
+		dragState = null;
+	}
+
+	// A single rAF loop drives the draw-on line, each avatar's float bob, and
+	// now the drag/throw physics, all from the same clock, and rewrites the
+	// polyline's points every frame from the avatars' live positions. That's
+	// the only way the line's vertices can stay glued to the avatars even
+	// *while* they're being thrown around — a CSS transition has no way to
+	// know about a separate CSS animation's (or a drag's) current position,
+	// so driving everything from one JS source is what keeps them in
+	// lockstep at every instant, not just once settled.
 	function startAnimation(el: SVGPolylineElement) {
 		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		const pathLength = el.getTotalLength();
 		el.style.strokeDasharray = `${pathLength}`;
+		el.style.strokeDashoffset = reduceMotion ? '0' : `${pathLength}`;
 
-		if (reduceMotion) {
-			el.style.strokeDashoffset = '0';
-			return;
-		}
-
-		photoEls.forEach((p) => p?.classList.add('is-synced'));
-		el.style.strokeDashoffset = `${pathLength}`;
+		if (!reduceMotion) photoEls.forEach((p) => p?.classList.add('is-synced'));
 
 		function frame() {
 			const t = performance.now() / 1000 - mountTime;
@@ -183,26 +283,78 @@
 			const points: string[] = [];
 			for (let i = 0; i < scene.items.length; i++) {
 				const item = scene.items[i];
-				const elapsed = t - item.floatDelay;
+				const p = physics[i];
+
 				let offsetY = 0;
-				if (elapsed > 0) {
-					const cyclePos =
-						((elapsed % item.floatDuration) + item.floatDuration) % item.floatDuration;
-					const progress = cyclePos / item.floatDuration;
-					offsetY = -item.floatAmplitude * 0.5 * (1 - Math.cos(2 * Math.PI * progress));
+				if (!reduceMotion) {
+					const elapsed = t - item.floatDelay;
+					if (elapsed > 0) {
+						const cyclePos =
+							((elapsed % item.floatDuration) + item.floatDuration) % item.floatDuration;
+						const progress = cyclePos / item.floatDuration;
+						offsetY = -item.floatAmplitude * 0.5 * (1 - Math.cos(2 * Math.PI * progress));
+					}
 				}
+
+				// Coast the thrown avatar on its last velocity, with friction,
+				// bouncing softly off the orbit canvas edges so it never
+				// permanently flies off-screen.
+				if (!p.dragging && (Math.abs(p.vx) > MIN_VELOCITY || Math.abs(p.vy) > MIN_VELOCITY)) {
+					p.x += p.vx;
+					p.y += p.vy;
+					p.vx *= FRICTION;
+					p.vy *= FRICTION;
+
+					const half = item.size / 2;
+					const minX = half - item.cx;
+					const maxX = orbitW - half - item.cx;
+					const minY = half - item.cy;
+					const maxY = orbitH - half - item.cy;
+
+					if (p.x < minX) {
+						p.x = minX;
+						p.vx = Math.abs(p.vx) * BOUNCE_DAMPING;
+					} else if (p.x > maxX) {
+						p.x = maxX;
+						p.vx = -Math.abs(p.vx) * BOUNCE_DAMPING;
+					}
+					if (p.y < minY) {
+						p.y = minY;
+						p.vy = Math.abs(p.vy) * BOUNCE_DAMPING;
+					} else if (p.y > maxY) {
+						p.y = maxY;
+						p.vy = -Math.abs(p.vy) * BOUNCE_DAMPING;
+					}
+				} else if (!p.dragging) {
+					p.vx = 0;
+					p.vy = 0;
+				}
+
 				const photoEl = photoEls[i];
-				if (photoEl) photoEl.style.transform = `translateY(${offsetY.toFixed(2)}px)`;
-				points.push(`${item.cx},${item.cy + offsetY}`);
+				if (photoEl)
+					photoEl.style.transform = `translate(${p.x.toFixed(2)}px, ${(offsetY + p.y).toFixed(2)}px)`;
+				points.push(`${item.cx + p.x},${item.cy + offsetY + p.y}`);
 			}
 			points.push(points[0]);
 			el.setAttribute('points', points.join(' '));
 
-			if (t < DRAW_DELAY) {
-				el.style.strokeDashoffset = `${pathLength}`;
-			} else if (t < DRAW_DELAY + DRAW_DURATION) {
-				const drawProgress = easeInOutCubic((t - DRAW_DELAY) / DRAW_DURATION);
-				el.style.strokeDashoffset = `${pathLength * (1 - drawProgress)}`;
+			// Re-measure every frame: dragging an avatar changes the polyline's
+			// actual total length, so a dasharray fixed at the original length
+			// would fall out of sync and make the dash pattern repeat along the
+			// now-longer (or shorter) path — which reads as the line randomly
+			// breaking or vanishing partway through.
+			const currentPathLength = el.getTotalLength();
+			el.style.strokeDasharray = `${currentPathLength}`;
+
+			if (!reduceMotion) {
+				if (t < DRAW_DELAY) {
+					el.style.strokeDashoffset = `${currentPathLength}`;
+				} else if (t < DRAW_DELAY + DRAW_DURATION) {
+					const drawProgress = easeInOutCubic((t - DRAW_DELAY) / DRAW_DURATION);
+					el.style.strokeDashoffset = `${currentPathLength * (1 - drawProgress)}`;
+				} else {
+					el.style.strokeDashoffset = '0';
+				}
 			} else {
 				el.style.strokeDashoffset = '0';
 			}
@@ -223,6 +375,7 @@
 		hasRandomized = true;
 		mountTime = performance.now() / 1000;
 		scene = buildScene(stellars, true, orbitW, orbitH);
+		resetPhysics(scene.items.length);
 		tick().then(() => {
 			if (pathEl) startAnimation(pathEl);
 		});
@@ -231,16 +384,14 @@
 	function handleClick() {
 		if (loggingIn) return;
 		loggingIn = true;
-		setTimeout(() => {
-			onLogin();
-		}, 700);
+		window.location.href = PUBLIC_LOGIN_URL;
 	}
 </script>
 
 <section class="login">
 	<div class="brand">
-		<span class="brand-mark">STELLOG</span>
-		<p class="brand-sub">스텔라이브 팔로우 확인 서비스</p>
+		<span class="brand-mark">STELINFO</span>
+		<p class="brand-sub">스텔라이브 팔로우&정보 확인 서비스</p>
 	</div>
 
 	<div class="orbit" aria-hidden="true" bind:clientWidth={orbitW} bind:clientHeight={orbitH}>
@@ -259,13 +410,18 @@
 					style={`--tint:${item.stellar.color}; --float-delay:${item.floatDelay}s; --float-duration:${item.floatDuration}s`}
 					src={item.stellar.image}
 					alt=""
+					draggable="false"
+					onpointerdown={(e) => handlePointerDown(i, e)}
+					onpointermove={handlePointerMove}
+					onpointerup={handlePointerUp}
+					onpointercancel={handlePointerUp}
 				/>
 			</div>
 		{/each}
 	</div>
 
 	<div class="login-box">
-		<h1>스텔로그에 오신 것을 환영해요</h1>
+		<h1>스텔인포에 오신 것을 환영해요</h1>
 		<p class="desc">치지직 계정으로 로그인 후<br />스텔라의 팔로우 정보를 확인해보세요.</p>
 		<button class="chzzk-btn" onclick={handleClick} disabled={loggingIn}>
 			{#if loggingIn}
@@ -276,7 +432,7 @@
 				치지직 로그인
 			{/if}
 		</button>
-		<p class="disclaimer">본 서비스는 디자인 검토용 데모이며, 모든 데이터는 더미입니다.</p>
+		<p class="disclaimer">본 서비스는 개인이 제작한 비공식 서비스입니다.</p>
 	</div>
 </section>
 
@@ -352,6 +508,10 @@
 		animation: orbit-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) var(--enter-delay, 0s) both;
 	}
 
+	.orbit-item:global(.is-dragging) {
+		z-index: 5;
+	}
+
 	.orbit-photo {
 		display: block;
 		width: 100%;
@@ -363,6 +523,14 @@
 			0 6px 14px rgba(134, 127, 219, 0.16),
 			0 0 16px 3px color-mix(in srgb, var(--tint, #fff) 40%, transparent);
 		animation: orbit-float var(--float-duration, 4s) ease-in-out var(--float-delay, 0s) infinite;
+		touch-action: none;
+		-webkit-user-drag: none;
+		user-select: none;
+		cursor: grab;
+	}
+
+	.orbit-item:global(.is-dragging) .orbit-photo {
+		cursor: grabbing;
 	}
 
 	/* Once the constellation line finishes drawing, the float motion switches
