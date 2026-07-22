@@ -33,8 +33,16 @@ const stellarChannelIds = {
 // rendering, rather than hitting the API directly ourselves.
 let browserPromise = null;
 function getBrowser() {
-    if (!browserPromise)
-        browserPromise = playwright_1.chromium.launch({ headless: true });
+    if (!browserPromise) {
+        browserPromise = playwright_1.chromium.launch({
+            headless: true,
+            // Chromium's sandbox needs a user-namespace setup that most
+            // servers (running as root, or inside a container) don't have,
+            // so it silently fails to launch there without this — even
+            // though it launches fine on a normal desktop dev machine.
+            args: ["--no-sandbox", "--disable-setuid-sandbox"]
+        });
+    }
     return browserPromise;
 }
 function captureChannelPage(channelId) {
@@ -46,7 +54,7 @@ function captureChannelPage(channelId) {
             locale: "ko-KR",
             timezoneId: "Asia/Seoul"
         });
-        const page = yield browser.newPage();
+        const page = yield context.newPage();
         const captured = { liveDetail: null, videos: null };
         page.on("response", (response) => __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -66,16 +74,21 @@ function captureChannelPage(channelId) {
             }
         }));
         try {
+            // "networkidle" never reliably fires on this page — it loads a huge
+            // long tail of ads/chat-emoji/badge requests that can keep the
+            // connection count from settling, especially on a slower network
+            // (confirmed: this alone caused the whole capture to silently come
+            // back empty on a home server, even though the same code worked
+            // fine on a faster dev machine). "load" plus a fixed extra wait for
+            // the page's own JS to fire its data requests is far more reliable.
             yield page.goto(`https://chzzk.naver.com/live/${channelId}`, {
-                waitUntil: "networkidle",
-                timeout: 20000
+                waitUntil: "load",
+                timeout: 45000
             });
-            // The two calls above are usually in-flight by the time networkidle
-            // fires, but give them a little extra room to resolve.
-            yield page.waitForTimeout(500);
+            yield page.waitForTimeout(6000);
         }
         finally {
-            yield page.close();
+            yield context.close();
         }
         return captured;
     });
