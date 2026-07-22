@@ -30,7 +30,16 @@ export interface LatestBroadcast {
 // rendering, rather than hitting the API directly ourselves.
 let browserPromise: Promise<Browser> | null = null;
 function getBrowser(): Promise<Browser> {
-    if (!browserPromise) browserPromise = chromium.launch({ headless: true });
+    if (!browserPromise) {
+        browserPromise = chromium.launch({
+            headless: true,
+            // Chromium's sandbox needs a user-namespace setup that most
+            // servers (running as root, or inside a container) don't have,
+            // so it silently fails to launch there without this — even
+            // though it launches fine on a normal desktop dev machine.
+            args: ["--no-sandbox", "--disable-setuid-sandbox"]
+        });
+    }
     return browserPromise;
 }
 
@@ -43,13 +52,14 @@ async function captureChannelPage(channelId: string): Promise<CapturedResponses>
     const browser = await getBrowser();
 
     const context = await browser.newContext({
-        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        userAgent:
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
         viewport: { width: 1280, height: 720 },
         locale: "ko-KR",
         timezoneId: "Asia/Seoul"
     });
 
-    const page = await browser.newPage();
+    const page = await context.newPage();
     const captured: CapturedResponses = { liveDetail: null, videos: null };
 
     page.on("response", async (response) => {
@@ -75,7 +85,7 @@ async function captureChannelPage(channelId: string): Promise<CapturedResponses>
         // fires, but give them a little extra room to resolve.
         await page.waitForTimeout(500);
     } finally {
-        await page.close();
+        await context.close();
     }
 
     return captured;
