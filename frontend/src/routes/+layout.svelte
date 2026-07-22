@@ -1,10 +1,16 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import '../app.css';
 	import { pwaInfo } from 'virtual:pwa-info';
+	import { auth } from '$lib/state/auth.svelte';
 
 	let { children } = $props();
 
 	let webManifestLink = $derived(pwaInfo ? pwaInfo.webManifest.linkTag : '');
+
+	onMount(() => {
+		auth.check();
+	});
 </script>
 
 <svelte:head>
@@ -13,4 +19,6 @@
 	{@html webManifestLink}
 </svelte:head>
 
-{@render children()}
+<main class="app-shell">
+	{@render children()}
+</main>
