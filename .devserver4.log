@@ -137,3 +137,17 @@
 [0] [0] 
 [0] [0] 
 [0] [0] 오전 4:24:08 - Found 0 errors. Watching for file changes.
+[0] [0] [2J[3J[H오전 4:32:33 - File change detected. Starting incremental compilation...
+[0] [0] 
+[0] [0] 
+[0] [0] 오전 4:32:33 - Found 0 errors. Watching for file changes.
+[0] [1] [32m[nodemon] restarting due to changes...[39m
+[0] [1] [32m[nodemon] starting `node dist/index.js`[39m
+[0] [1] Server is running on http://localhost:3000
+[0] [0] [2J[3J[H오전 4:32:36 - File change detected. Starting incremental compilation...
+[0] [0] 
+[0] [0] 
+[0] [0] 오전 4:32:36 - Found 0 errors. Watching for file changes.
+[0] [1] [32m[nodemon] restarting due to changes...[39m
+[0] [1] [32m[nodemon] starting `node dist/index.js`[39m
+[0] [1] Server is running on http://localhost:3000
