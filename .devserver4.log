@@ -151,3 +151,25 @@
 [0] [1] [32m[nodemon] restarting due to changes...[39m
 [0] [1] [32m[nodemon] starting `node dist/index.js`[39m
 [0] [1] Server is running on http://localhost:3000
+[0] [1] [32m[nodemon] restarting due to changes...[39m
+[0] [1] [32m[nodemon] restarting due to changes...[39m
+[0] [1] [32m[nodemon] restarting due to changes...[39m
+[0] [0] [2J[3J[H오전 4:51:08 - File change detected. Starting incremental compilation...
+[0] [0] 
+[0] [1] [32m[nodemon] restarting due to changes...[39m
+[0] [1] [32m[nodemon] starting `node dist/index.js`[39m
+[0] [0] 
+[0] [0] 오전 4:51:08 - Found 0 errors. Watching for file changes.
+[0] [1] Server is running on http://localhost:3000
+[0] [1] [32m[nodemon] clean exit - waiting for changes before restart[39m
+[0] [0] [2J[3J[H오전 4:58:45 - File change detected. Starting incremental compilation...
+[0] [0] 
+[0] [0] 
+[0] [0] 오전 4:58:45 - Found 0 errors. Watching for file changes.
+[0] [1] [32m[nodemon] restarting due to changes...[39m
+[0] [1] [32m[nodemon] starting `node dist/index.js`[39m
+[0] [1] Server is running on http://localhost:3000
+[0] [0] [2J[3J[H오전 4:58:46 - File change detected. Starting incremental compilation...
+[0] [0] 
+[0] [0] 
+[0] [0] 오전 4:58:46 - Found 0 errors. Watching for file changes.

@@ -14,9 +14,11 @@ const FRONTEND_URL = process.env.frontend_url ?? "http://localhost:5173";
 const PORT = process.env.port ?? 3000;
 
 if (!CHZZK_CLIENT_ID || !CHZZK_CLIENT_SECRET || !CHZZK_REDIRECT_URI) {
-    throw new Error(
-        "Missing chzzk_client_id / chzzk_client_secret / chzzk_redirect_uri in backend/.env"
-    );
+    console.error("❌ [.env 오류] 치지직 API 관련 환경변수가 설정되지 않았습니다.");
+    console.error(`- CHZZK_CLIENT_ID: ${CHZZK_CLIENT_ID}`);
+    console.error(`- CHZZK_CLIENT_SECRET: ${CHZZK_CLIENT_SECRET}`);
+    console.error(`- CHZZK_REDIRECT_URI: ${CHZZK_REDIRECT_URI}`);
+    process.exit(1);
 }
 
 const CHZZK_AUTHORIZE_URL = "https://chzzk.naver.com/account-interlock";
@@ -223,6 +225,6 @@ app.post("/logout", (req, res) => {
     res.status(204).end();
 });
 
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
