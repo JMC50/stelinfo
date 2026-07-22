@@ -133,3 +133,7 @@
 [1] [0] [2m오전 4:23:33[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LoginScreen.svelte[22m
 [1] [0] [2m오전 4:24:03[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LoginScreen.svelte, /src/lib/components/LoginScreen.svelte?svelte&type=style&lang.css[22m
 [1] [0] [2m오전 4:24:03[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LoginScreen.svelte[22m
+[0] [0] [2J[3J[H오전 4:24:08 - File change detected. Starting incremental compilation...
+[0] [0] 
+[0] [0] 
+[0] [0] 오전 4:24:08 - Found 0 errors. Watching for file changes.

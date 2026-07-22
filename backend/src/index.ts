@@ -11,6 +11,7 @@ const CHZZK_CLIENT_ID = process.env.chzzk_client_id;
 const CHZZK_CLIENT_SECRET = process.env.chzzk_client_secret;
 const CHZZK_REDIRECT_URI = process.env.chzzk_redirect_uri;
 const FRONTEND_URL = process.env.frontend_url ?? "http://localhost:5173";
+const PORT = process.env.port ?? 3000;
 
 if (!CHZZK_CLIENT_ID || !CHZZK_CLIENT_SECRET || !CHZZK_REDIRECT_URI) {
     throw new Error(
@@ -222,6 +223,6 @@ app.post("/logout", (req, res) => {
     res.status(204).end();
 });
 
-app.listen(3000, () => {
-    console.log("Server is running on http://localhost:3000");
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

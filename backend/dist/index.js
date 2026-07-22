@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const node_crypto_1 = __importDefault(require("node:crypto"));
@@ -25,6 +25,7 @@ const CHZZK_CLIENT_ID = process.env.chzzk_client_id;
 const CHZZK_CLIENT_SECRET = process.env.chzzk_client_secret;
 const CHZZK_REDIRECT_URI = process.env.chzzk_redirect_uri;
 const FRONTEND_URL = (_a = process.env.frontend_url) !== null && _a !== void 0 ? _a : "http://localhost:5173";
+const PORT = (_b = process.env.port) !== null && _b !== void 0 ? _b : 3000;
 if (!CHZZK_CLIENT_ID || !CHZZK_CLIENT_SECRET || !CHZZK_REDIRECT_URI) {
     throw new Error("Missing chzzk_client_id / chzzk_client_secret / chzzk_redirect_uri in backend/.env");
 }
@@ -182,6 +183,6 @@ app.post("/logout", (req, res) => {
     res.clearCookie(SESSION_COOKIE);
     res.status(204).end();
 });
-app.listen(3000, () => {
-    console.log("Server is running on http://localhost:3000");
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
