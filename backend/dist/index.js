@@ -187,6 +187,13 @@ app.post("/logout", (req, res) => {
     res.clearCookie(SESSION_COOKIE);
     res.status(204).end();
 });
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+});
+setInterval(() => { }, 1000 * 60 * 60);
+process.on('SIGINT', () => {
+    server.close(() => {
+        console.log('Server closed gracefully');
+        process.exit(0);
+    });
 });
