@@ -397,6 +397,8 @@
 		text-decoration: none;
 		color: inherit;
 		transition: transform 0.15s ease;
+		-webkit-tap-highlight-color: transparent;
+		-webkit-touch-callout: none;
 	}
 
 	.info-card--stream:active {
