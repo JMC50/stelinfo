@@ -1,16 +1,16 @@
 # Graph Report - stelinfo  (2026-07-23)
 
 ## Corpus Check
-- 23 files · ~27,718 words
+- 23 files · ~27,916 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 195 nodes · 191 edges · 28 communities (13 shown, 15 thin omitted)
+- 196 nodes · 192 edges · 28 communities (13 shown, 15 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4f9634ac`
+- Built from commit: `28f0aa89`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -97,15 +97,15 @@ Cohesion: 0.40
 Nodes (5): Frontend README, App Shell (HTML), Akane Lize Avatar, Stellog Demo Project, SvelteKit Framework
 
 ### Community 10 - "Backend Application Entry"
-Cohesion: 0.13
-Nodes (16): cache, captureChannelPage(), CapturedResponses, getBrowser(), getLatestBroadcast(), LatestBroadcast, stellarChannelIds, app (+8 more)
+Cohesion: 0.12
+Nodes (17): cache, captureChannelPage(), CapturedResponses, getBrowser(), getLatestBroadcast(), LatestBroadcast, stellarChannelIds, app (+9 more)
 
 ### Community 26 - "Robots Exclusion Configuration"
 Cohesion: 0.14
 Nodes (13): name, private, scripts, build, check, check:watch, dev, format (+5 more)
 
 ## Knowledge Gaps
-- **119 isolated node(s):** `@types/express`, `cookie-parser`, `cors`, `dotenv`, `express` (+114 more)
+- **120 isolated node(s):** `@types/express`, `cookie-parser`, `cors`, `dotenv`, `express` (+115 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -115,7 +115,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `devDependencies` connect `Frontend Development Dependencies` to `Robots Exclusion Configuration`?**
   _High betweenness centrality (0.054) - this node is a cross-community bridge._
 - **What connects `@types/express`, `cookie-parser`, `cors` to the rest of the system?**
-  _119 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _120 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Frontend Development Dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
 - **Should `Package Metadata` be split into smaller, more focused modules?**
@@ -125,4 +125,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Backend Express Dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
 - **Should `Backend Application Entry` be split into smaller, more focused modules?**
-  _Cohesion score 0.1286549707602339 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12105263157894737 - nodes in this community are weakly interconnected._

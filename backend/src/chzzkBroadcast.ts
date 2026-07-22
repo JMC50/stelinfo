@@ -48,6 +48,11 @@ interface CapturedResponses {
     videos: any;
 }
 
+// Ceiling for the rare case the page never fires the responses we need at
+// all (network hiccup, chzzk markup change, etc). The normal case resolves
+// via maybeDone() well before this.
+const CAPTURE_TIMEOUT_MS = 20000;
+
 async function captureChannelPage(channelId: string): Promise<CapturedResponses> {
     const browser = await getBrowser();
 
@@ -62,34 +67,54 @@ async function captureChannelPage(channelId: string): Promise<CapturedResponses>
     const page = await context.newPage();
     const captured: CapturedResponses = { liveDetail: null, videos: null };
 
-    page.on("response", async (response) => {
-        if (!response.ok()) return;
-        const url = response.url();
-        try {
-            if (url.includes(`/channels/${channelId}/live-detail`)) {
-                captured.liveDetail = await response.json();
-            } else if (url.includes(`/channels/${channelId}/videos`)) {
-                captured.videos ??= await response.json();
-            }
-        } catch {
-            // Non-JSON response (e.g. a redirect/asset) — ignore.
-        }
-    });
-
     try {
-        // "networkidle" never reliably fires on this page — it loads a huge
-        // long tail of ads/chat-emoji/badge requests that can keep the
-        // connection count from settling, especially on a slower network
-        // (confirmed: this alone caused the whole capture to silently come
-        // back empty on a home server, even though the same code worked
-        // fine on a faster dev machine). "load" plus a fixed extra wait for
-        // the page's own JS to fire its data requests is far more reliable.
-        await page.goto(`https://chzzk.naver.com/live/${channelId}`, {
-            waitUntil: "load",
-            timeout: 45000
+        // Don't wait for the page's own "done loading" signal — this page
+        // keeps loading for a long time after (hundreds of ad/chat-emoji/
+        // badge requests), and neither "load" nor "networkidle" reflect
+        // when the two responses we actually care about have arrived.
+        // Instead resolve as soon as we have what we need: a live broadcast
+        // only needs live-detail; a non-live one needs both live-detail
+        // (to know it's not live) and videos.
+        await new Promise<void>((resolve) => {
+            let settled = false;
+            const maybeDone = () => {
+                if (settled) return;
+                const isLive = captured.liveDetail?.content?.status === "OPEN";
+                if (isLive || (captured.liveDetail && captured.videos)) {
+                    settled = true;
+                    resolve();
+                }
+            };
+
+            page.on("response", async (response) => {
+                if (!response.ok()) return;
+                const url = response.url();
+                try {
+                    if (url.includes(`/channels/${channelId}/live-detail`)) {
+                        captured.liveDetail = await response.json();
+                        maybeDone();
+                    } else if (url.includes(`/channels/${channelId}/videos`)) {
+                        captured.videos ??= await response.json();
+                        maybeDone();
+                    }
+                } catch {
+                    // Non-JSON response (e.g. a redirect/asset) — ignore.
+                }
+            });
+
+            // Fire-and-forget: navigation keeps running in the background,
+            // but completion is driven by maybeDone() above, not by this.
+            page.goto(`https://chzzk.naver.com/live/${channelId}`, { timeout: CAPTURE_TIMEOUT_MS }).catch(() => {});
+
+            setTimeout(() => {
+                settled = true;
+                resolve();
+            }, CAPTURE_TIMEOUT_MS);
         });
-        await page.waitForTimeout(6000);
     } finally {
+        // Safe to close mid-navigation — we already have what we need (or
+        // hit the timeout), so the rest of the page's load is just wasted
+        // work at that point.
         await context.close();
     }
 
