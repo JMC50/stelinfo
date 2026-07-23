@@ -13,26 +13,30 @@
 </script>
 
 <section class="login">
-	<div class="brand">
-		<span class="brand-mark">STELINFO</span>
-		<p class="brand-sub">스텔라이브 팔로우&정보 확인 서비스</p>
+	<div class="login-visual">
+		<StellarOrbit {stellars} />
 	</div>
 
-	<StellarOrbit {stellars} />
+	<div class="login-panel">
+		<div class="brand">
+			<span class="brand-mark">STELINFO</span>
+			<p class="brand-sub">스텔라이브 팔로우&정보 확인 서비스</p>
+		</div>
 
-	<div class="login-box">
-		<h1>스텔인포에 오신 것을 환영해요</h1>
-		<p class="desc">치지직 계정으로 로그인 후<br />스텔라의 팔로우 정보를 확인해보세요.</p>
-		<button class="chzzk-btn" onclick={handleClick} disabled={loggingIn}>
-			{#if loggingIn}
-				<span class="spinner" aria-hidden="true"></span>
-				연동하는 중...
-			{:else}
-				<span class="chzzk-dot" aria-hidden="true"></span>
-				치지직 로그인
-			{/if}
-		</button>
-		<p class="disclaimer">본 서비스는 개인이 제작한 비공식 서비스입니다.</p>
+		<div class="login-box">
+			<h1>스텔인포에 오신 것을 환영해요</h1>
+			<p class="desc">치지직 계정으로 로그인 후<br />스텔라의 팔로우 정보를 확인해보세요.</p>
+			<button class="chzzk-btn" onclick={handleClick} disabled={loggingIn}>
+				{#if loggingIn}
+					<span class="spinner" aria-hidden="true"></span>
+					연동하는 중...
+				{:else}
+					<span class="chzzk-dot" aria-hidden="true"></span>
+					치지직 로그인
+				{/if}
+			</button>
+			<p class="disclaimer">본 서비스는 개인이 제작한 비공식 서비스입니다.</p>
+		</div>
 	</div>
 </section>
 
@@ -45,7 +49,24 @@
 		text-align: center;
 	}
 
+	/* Mobile: just a normal flex item sitting between brand and login-box
+	   (order below), sized by StellarOrbit's own flex:1. */
+	.login-visual {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		width: 100%;
+		order: 2;
+	}
+
+	/* Mobile: unwrapped so brand/login-box interleave with login-visual via
+	   order, instead of being forced adjacent to each other. */
+	.login-panel {
+		display: contents;
+	}
+
 	.brand {
+		order: 1;
 		margin-top: 12px;
 	}
 
@@ -63,6 +84,7 @@
 	}
 
 	.login-box {
+		order: 3;
 		width: 100%;
 		background: var(--color-surface);
 		border-radius: var(--radius-lg);
@@ -134,6 +156,52 @@
 	@keyframes spin {
 		to {
 			transform: rotate(360deg);
+		}
+	}
+
+	/* PC/tablet: side-by-side split instead of the mobile stack. Breaks out
+	   of .app-shell's max-width:480px (a full-bleed technique: 100vw wide,
+	   shifted left by half a viewport) since that width cap is shared by
+	   every route and the other screens aren't responsive yet — this stays
+	   scoped to the login screen alone rather than loosening it globally. */
+	@media (min-width: 768px) {
+		.login {
+			flex-direction: row;
+			align-items: stretch;
+			text-align: left;
+			width: 100vw;
+			/* Full-bleed formula: percentages in margin resolve against the
+			   containing block's content width, which — because .app-shell
+			   is itself centered with margin:auto — makes this cancel out
+			   to exactly 0 regardless of .app-shell's own width or padding. */
+			margin-left: calc(50% - 50vw);
+		}
+
+		.login-visual {
+			order: 0;
+			flex: 1 1 50%;
+			max-width: 50%;
+			padding: 48px;
+		}
+
+		.login-panel {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			flex: 1 1 50%;
+			max-width: 50%;
+			padding: 48px 64px;
+		}
+
+		.brand {
+			order: 0;
+			margin-top: 0;
+		}
+
+		.login-box {
+			order: 0;
+			margin-top: 32px;
+			max-width: 420px;
 		}
 	}
 </style>

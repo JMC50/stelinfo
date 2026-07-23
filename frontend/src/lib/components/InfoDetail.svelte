@@ -40,67 +40,71 @@
 </script>
 
 <section class="detail" style={`--stellar-color:${info.HEX}; --stellar-text:${info.text_HEX}`}>
-	<button class="back-btn" onclick={onBack} aria-label="스텔라 목록으로 돌아가기">
-		<span aria-hidden="true">←</span> 목록으로
-	</button>
+	<div class="detail-inner">
+		<button class="back-btn" onclick={onBack} aria-label="스텔라 목록으로 돌아가기">
+			<span aria-hidden="true">←</span> 목록으로
+		</button>
 
-	<div class="hero">
-		<div class="hero-avatar-wrap">
-			<img class="hero-avatar" src={image} alt={info.stellar} />
-		</div>
-		<div class="hero-badges" aria-hidden="true">
-			<span>{info.oshimark}</span>
-			<span>{info.oshimark1}</span>
-		</div>
-		<h1>{info.memberName}</h1>
-		<p class="hero-eng">{info.stellar}</p>
-	</div>
-
-	<StellarShortcutRow {links} />
-
-	<div class="status-row">
-		<div class="status-pill" class:active={isFollowing}>
-			<span class="pill-label">팔로우</span>
-			<span class="pill-value">{isFollowing ? '팔로잉' : '미팔로우'}</span>
-			<span class="pill-sub"
-				>{isFollowing ? `${followDays}일째 · ${info.follow_date}부터` : ' '}</span
-			>
-		</div>
-		<div class="status-pill" class:active={isSubscribed}>
-			<span class="pill-label">구독</span>
-			<span class="pill-value">{isSubscribed ? `${info.subscribe_month}개월째` : '미구독'}</span>
-			<span class="pill-sub">&nbsp;</span>
-		</div>
-	</div>
-
-	<div class="info-card info-card--user">
-		<h2>유저 정보</h2>
-		<dl>
-			<div class="info-row">
-				<dt>닉네임</dt>
-				<dd>{user.channelName}</dd>
+		<div class="detail-grid">
+			<div class="hero">
+				<div class="hero-avatar-wrap">
+					<img class="hero-avatar" src={image} alt={info.stellar} />
+				</div>
+				<div class="hero-badges" aria-hidden="true">
+					<span>{info.oshimark}</span>
+					<span>{info.oshimark1}</span>
+				</div>
+				<h1>{info.memberName}</h1>
+				<p class="hero-eng">{info.stellar}</p>
 			</div>
-		</dl>
-	</div>
 
-	<a
-		class="info-card info-card--stream"
-		href={info.last_stream_url || undefined}
-		target="_blank"
-		rel="noopener noreferrer"
-	>
-		<div class="chzzk-row">
-			<h2>
-				{info.is_live ? '방송 중' : '최근 방송'}
-				{#if info.is_live}<span class="live-badge">LIVE</span>{/if}
-			</h2>
-			<img src="/icons/link.svg" alt="" class="info-card-icon" />
+			<div class="area-shortcuts"><StellarShortcutRow {links} /></div>
+
+			<div class="status-row">
+				<div class="status-pill" class:active={isFollowing}>
+					<span class="pill-label">팔로우</span>
+					<span class="pill-value">{isFollowing ? '팔로잉' : '미팔로우'}</span>
+					<span class="pill-sub"
+						>{isFollowing ? `${followDays}일째 · ${info.follow_date}부터` : ' '}</span
+					>
+				</div>
+				<div class="status-pill" class:active={isSubscribed}>
+					<span class="pill-label">구독</span>
+					<span class="pill-value">{isSubscribed ? `${info.subscribe_month}개월째` : '미구독'}</span>
+					<span class="pill-sub">&nbsp;</span>
+				</div>
+			</div>
+
+			<div class="info-card info-card--user">
+				<h2>유저 정보</h2>
+				<dl>
+					<div class="info-row">
+						<dt>닉네임</dt>
+						<dd>{user.channelName}</dd>
+					</div>
+				</dl>
+			</div>
+
+			<a
+				class="info-card info-card--stream"
+				href={info.last_stream_url || undefined}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<div class="chzzk-row">
+					<h2>
+						{info.is_live ? '방송 중' : '최근 방송'}
+						{#if info.is_live}<span class="live-badge">LIVE</span>{/if}
+					</h2>
+					<img src="/icons/link.svg" alt="" class="info-card-icon" />
+				</div>
+				<p class="stream-title">{info.last_stream_title}</p>
+				<p class="stream-date">{info.last_stream_date}</p>
+			</a>
+
+			<div class="area-videos"><StellarVideoRow {youtube} /></div>
 		</div>
-		<p class="stream-title">{info.last_stream_title}</p>
-		<p class="stream-date">{info.last_stream_date}</p>
-	</a>
-
-	<StellarVideoRow {youtube} />
+	</div>
 </section>
 
 <style>
@@ -108,6 +112,20 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.detail-inner {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	/* Mobile: transparent, children just stack in .detail-inner's flex
+	   column in document order — same visual result as before this was
+	   introduced for the desktop grid below. */
+	.detail-grid {
+		display: contents;
 	}
 
 	.back-btn {
@@ -373,5 +391,97 @@
 
 	.info-card-icon {
 		width: 15px;
+	}
+
+	/* PC/tablet: same two-layer break-out as the select screen (full-bleed
+	   outer, capped-and-centered inner), then hero becomes a tall portrait
+	   card anchoring one side with everything else arranged around it in a
+	   bento grid instead of one long stack. */
+	@media (min-width: 768px) {
+		.detail {
+			width: 100vw;
+			margin-left: calc(50% - 50vw);
+		}
+
+		.detail-inner {
+			max-width: 1080px;
+			margin: 0 auto;
+			padding: 0 40px;
+		}
+
+		.detail-grid {
+			display: grid;
+			grid-template-columns: 340px 1fr 1fr;
+			grid-template-rows: auto auto auto auto;
+			grid-template-areas:
+				'hero shortcuts shortcuts'
+				'hero status status'
+				'hero user stream'
+				'hero videos videos';
+			gap: 20px;
+			margin-top: 28px;
+			/* No explicit align-items — grid's default "stretch" is what we
+			   want here: info-card--user and info-card--stream share a row
+			   with uneven content (one line vs. title+date), and stretching
+			   them to match heights reads much better side by side than
+			   letting the shorter one hug its own content height. */
+		}
+
+		.hero {
+			grid-area: hero;
+			margin-top: 0;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			padding: 40px 28px;
+		}
+
+		.hero-avatar-wrap {
+			width: 140px;
+			height: 140px;
+		}
+
+		.hero h1 {
+			margin-top: 14px;
+			font-size: 26px;
+		}
+
+		.area-shortcuts {
+			grid-area: shortcuts;
+		}
+
+		.area-shortcuts :global(.shortcut-row) {
+			margin-top: 0;
+			justify-content: flex-start;
+		}
+
+		.status-row {
+			grid-area: status;
+			margin-top: 0;
+		}
+
+		.info-card--user {
+			grid-area: user;
+			margin-top: 0;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.info-card--stream {
+			grid-area: stream;
+			margin-top: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		.area-videos {
+			grid-area: videos;
+		}
+
+		.area-videos :global(.video-row) {
+			margin-top: 0;
+		}
 	}
 </style>

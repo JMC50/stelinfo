@@ -20,30 +20,32 @@
 </script>
 
 <section class="select-screen">
-	<header class="select-header">
-		<button class="logout-btn" onclick={onLogout}>로그아웃</button>
-		<div class="user-chip">
-			<div class="user-avatar">{user.channelName.charAt(0)}</div>
-			<div class="user-text">
-				<p class="user-hello">안녕하세요 👋</p>
-				<p class="user-name">{user.channelName}님</p>
+	<div class="select-inner">
+		<header class="select-header">
+			<button class="logout-btn" onclick={onLogout}>로그아웃</button>
+			<div class="user-chip">
+				<div class="user-avatar">{user.channelName.charAt(0)}</div>
+				<div class="user-text">
+					<p class="user-hello">안녕하세요 👋</p>
+					<p class="user-name">{user.channelName}님</p>
+				</div>
+				<span class="connected-badge">연동됨</span>
 			</div>
-			<span class="connected-badge">연동됨</span>
-		</div>
-		<h1>확인할 스텔라를 선택해주세요</h1>
-		<p class="select-desc">선택한 스텔라와의 팔로우・구독 기록과 정보를 보여드려요.</p>
-	</header>
+			<h1>확인할 스텔라를 선택해주세요</h1>
+			<p class="select-desc">선택한 스텔라와의 팔로우・구독 기록과 정보를 보여드려요.</p>
+		</header>
 
-	<div class="stellar-grid">
-		{#each stellars as s, i (s.id)}
-			<StellarTile
-				stellar={s}
-				loading={loadingId === s.id}
-				disabled={loadingId !== null}
-				delayMs={Math.floor(i / columns) * 70 + (i % columns) * 25}
-				onSelect={() => onSelect(s.id)}
-			/>
-		{/each}
+		<div class="stellar-grid">
+			{#each stellars as s, i (s.id)}
+				<StellarTile
+					stellar={s}
+					loading={loadingId === s.id}
+					disabled={loadingId !== null}
+					delayMs={Math.floor(i / columns) * 70 + (i % columns) * 25}
+					onSelect={() => onSelect(s.id)}
+				/>
+			{/each}
+		</div>
 	</div>
 </section>
 
@@ -52,6 +54,13 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.select-inner {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		width: 100%;
 	}
 
 	.select-header {
@@ -171,6 +180,42 @@
 		.select-desc {
 			animation: none;
 			opacity: 1;
+		}
+	}
+
+	/* PC/tablet: same full-bleed break-out as the login screen (escapes
+	   .app-shell's shared max-width:480px without loosening it globally),
+	   but re-centers at a wider-but-bounded column instead of going edge to
+	   edge — a grid of small tiles stretched across an ultra-wide viewport
+	   would just look sparse, not more useful. Two layers because the
+	   break-out math (margin-left: calc(50% - 50vw)) only centers correctly
+	   when the element is truly 100vw wide; capping width with max-width on
+	   the same element would throw that off, so the cap + centering lives
+	   on a separate inner element instead. */
+	@media (min-width: 768px) {
+		.select-screen {
+			width: 100vw;
+			margin-left: calc(50% - 50vw);
+		}
+
+		.select-inner {
+			max-width: 1080px;
+			margin: 0 auto;
+			padding: 0 40px;
+		}
+
+		.select-header h1 {
+			font-size: 26px;
+		}
+
+		.select-desc {
+			font-size: 14px;
+		}
+
+		.stellar-grid {
+			margin-top: 32px;
+			grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+			gap: 28px 20px;
 		}
 	}
 </style>

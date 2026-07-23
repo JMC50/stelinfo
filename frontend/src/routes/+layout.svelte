@@ -3,6 +3,7 @@
 	import '../app.css';
 	import { pwaInfo } from 'virtual:pwa-info';
 	import { auth } from '$lib/state/auth.svelte';
+	import RotateHint from '$lib/components/RotateHint.svelte';
 
 	let { children } = $props();
 
@@ -18,6 +19,8 @@
 	<link rel="apple-touch-icon" href="/icons/icon.png" />
 	{@html webManifestLink}
 </svelte:head>
+
+<RotateHint />
 
 <main class="app-shell">
 	{@render children()}

@@ -17,7 +17,31 @@
 	// before the real container size is known.
 	const FALLBACK_W = 340;
 	const FALLBACK_H = 280;
-	const GAP = 8;
+
+	// Avatar size and spacing scale with the container instead of being
+	// fixed pixel values, so the same component looks right whether it's a
+	// small mobile strip or a full desktop half-screen pane (bigger canvas
+	// => bigger, more spread-out avatars) rather than the same handful of
+	// small dots floating in a lot of empty space.
+	function gapFor(canvasW: number, canvasH: number): number {
+		return Math.min(canvasW, canvasH) * 0.02;
+	}
+
+	function randomBaseSize(canvasW: number, canvasH: number): number {
+		const unit = Math.min(canvasW, canvasH);
+		return unit * (0.09 + Math.random() * 0.045);
+	}
+
+	// The polyline's viewBox is matched 1:1 to the container's real pixel
+	// size (see buildScene), so a stroke-width in SVG units is a stroke
+	// width in on-screen pixels too — a fixed value that looks fine on a
+	// small mobile strip reads as a hairline once the same canvas (and its
+	// now-much-bigger avatars) stretches across a PC/tablet pane, so this
+	// scales with the canvas the same way avatar size does.
+	function strokeWidthFor(canvasW: number, canvasH: number): number {
+		const unit = Math.min(canvasW, canvasH);
+		return Math.min(2, Math.max(1, unit / 260));
+	}
 
 	// Finds the best available spot for a circle of the given size: cheap
 	// random sampling first, then an exhaustive grid scan that is guaranteed
@@ -29,7 +53,8 @@
 		size: number,
 		canvasW: number,
 		canvasH: number,
-		placed: { cx: number; cy: number; size: number }[]
+		placed: { cx: number; cy: number; size: number }[],
+		gap: number
 	): { cx: number; cy: number; gap: number } {
 		const gapAt = (cx: number, cy: number) =>
 			placed.reduce((acc, p) => {
@@ -40,16 +65,16 @@
 		for (let attempt = 0; attempt < 80; attempt++) {
 			const cx = size / 2 + Math.random() * Math.max(1, canvasW - size);
 			const cy = size / 2 + Math.random() * Math.max(1, canvasH - size);
-			if (gapAt(cx, cy) >= GAP) return { cx, cy, gap: GAP };
+			if (gapAt(cx, cy) >= gap) return { cx, cy, gap };
 		}
 
 		let best = { cx: canvasW / 2, cy: canvasH / 2, gap: -Infinity };
 		const step = Math.max(3, size / 8);
 		for (let y = size / 2; y <= canvasH - size / 2; y += step) {
 			for (let x = size / 2; x <= canvasW - size / 2; x += step) {
-				const gap = gapAt(x, y);
-				if (gap > best.gap) best = { cx: x, cy: y, gap };
-				if (gap >= GAP) return best;
+				const g = gapAt(x, y);
+				if (g > best.gap) best = { cx: x, cy: y, gap: g };
+				if (g >= gap) return best;
 			}
 		}
 		return best;
@@ -61,13 +86,14 @@
 		baseSize: number,
 		canvasW: number,
 		canvasH: number,
-		placed: { cx: number; cy: number; size: number }[]
+		placed: { cx: number; cy: number; size: number }[],
+		gap: number
 	): { cx: number; cy: number; size: number } {
 		const sizeSteps = [baseSize, baseSize * 0.85, baseSize * 0.7, baseSize * 0.55];
 		let fallback = { cx: canvasW / 2, cy: canvasH / 2, size: sizeSteps[sizeSteps.length - 1] };
 		for (const size of sizeSteps) {
-			const spot = findSpot(size, canvasW, canvasH, placed);
-			if (spot.gap >= GAP) return { cx: spot.cx, cy: spot.cy, size };
+			const spot = findSpot(size, canvasW, canvasH, placed, gap);
+			if (spot.gap >= gap) return { cx: spot.cx, cy: spot.cy, size };
 			fallback = { cx: spot.cx, cy: spot.cy, size };
 		}
 		return fallback;
@@ -82,17 +108,18 @@
 		const ordered = randomize ? shuffle(list) : list;
 		const cols = 5;
 		const placed: { cx: number; cy: number; size: number }[] = [];
+		const gap = gapFor(canvasW, canvasH);
 
 		return ordered.map((stellar, i) => {
 			let cx: number;
 			let cy: number;
 			let size: number;
 			if (randomize) {
-				const baseSize = 32 + Math.round(Math.random() * 16);
-				({ cx, cy, size } = scatterPosition(baseSize, canvasW, canvasH, placed));
+				const baseSize = randomBaseSize(canvasW, canvasH);
+				({ cx, cy, size } = scatterPosition(baseSize, canvasW, canvasH, placed, gap));
 			} else {
 				// Deterministic grid for the SSR-rendered first paint.
-				size = 40;
+				size = Math.min(canvasW, canvasH) * 0.12;
 				const col = i % cols;
 				const row = Math.floor(i / cols);
 				cx = (col + 0.5) * (canvasW / cols);
@@ -131,7 +158,8 @@
 		const items = buildOrbitItems(list, randomize, canvasW, canvasH);
 		const loop = [...items, items[0]];
 		const pathPoints = loop.map((it) => `${it.cx},${it.cy}`).join(' ');
-		return { items, pathPoints, canvasW, canvasH };
+		const strokeWidth = strokeWidthFor(canvasW, canvasH);
+		return { items, pathPoints, canvasW, canvasH, strokeWidth };
 	}
 
 	// Math.random() must not run during the initial render: SSR and the client
@@ -386,7 +414,11 @@
 
 <div class="orbit" aria-hidden="true" bind:clientWidth={orbitW} bind:clientHeight={orbitH}>
 	<div class="orbit-glow"></div>
-	<svg class="orbit-lines" viewBox={`0 0 ${scene.canvasW} ${scene.canvasH}`}>
+	<svg
+		class="orbit-lines"
+		viewBox={`0 0 ${scene.canvasW} ${scene.canvasH}`}
+		style={`--stroke-width:${scene.strokeWidth}`}
+	>
 		<polyline bind:this={pathEl} class="constellation-path" points={scene.pathPoints} />
 	</svg>
 	{#each scene.items as item, i (item.stellar.id)}
@@ -445,7 +477,7 @@
 		fill: none;
 		stroke: var(--color-primary);
 		stroke-opacity: 0.18;
-		stroke-width: 1;
+		stroke-width: var(--stroke-width, 1);
 		stroke-linecap: round;
 		stroke-linejoin: round;
 	}
