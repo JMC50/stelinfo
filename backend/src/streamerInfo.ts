@@ -6,7 +6,7 @@ export interface DummyStreamerInfo {
     oshimark1: string;
     HEX: string;
     stellar_short_name: string;
-    subscribe_month: string;
+    subscribe_month: number;
     text_HEX: string;
 }
 
@@ -26,7 +26,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "",
         HEX: "#8182B8",
         stellar_short_name: "강지",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#FFFFFF"
     },
     Ayatsuno_yuni: {
@@ -37,7 +37,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🤍",
         HEX: "#7987E0",
         stellar_short_name: "유니",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#FFFFFF"
     },
     Sakihane_huya: {
@@ -48,7 +48,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🐲",
         HEX: "#8166A1",
         stellar_short_name: "후야",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#FFFFFF"
     },
     Shirayuki_hina: {
@@ -59,7 +59,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "❄️",
         HEX: "#F2DCBF",
         stellar_short_name: "히나",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#000000"
     },
     Neneko_mashiro: {
@@ -70,7 +70,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🥛",
         HEX: "#25282A",
         stellar_short_name: "시로",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#FFFFFF"
     },
     Akane_lize: {
@@ -81,7 +81,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🩸",
         HEX: "#951C2E",
         stellar_short_name: "리제",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#FFFFFF"
     },
     Arahashi_tabi: {
@@ -92,7 +92,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🌊",
         HEX: "#9ADAFF",
         stellar_short_name: "타비",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#000000"
     },
     Tenko_shibuki: {
@@ -103,7 +103,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🕹️",
         HEX: "#C2AFE6",
         stellar_short_name: "부키",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#000000"
     },
     Aokumo_rin: {
@@ -114,7 +114,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🛼",
         HEX: "#2B66C0",
         stellar_short_name: "린",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#FFFFFF"
     },
     Hanako_nana: {
@@ -125,7 +125,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🐰",
         HEX: "#DF7685",
         stellar_short_name: "나나",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#000000"
     },
     Yuzuha_riko: {
@@ -136,7 +136,7 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         oshimark1: "🍀",
         HEX: "#A6D0A6",
         stellar_short_name: "리코",
-        subscribe_month: "",
+        subscribe_month: 0,
         text_HEX: "#000000"
     }
 };

@@ -24,9 +24,16 @@
 	let isFollowing = $derived(!!info.follow_date);
 	let isSubscribed = $derived(info.subscribe_month > 0);
 	let followDays = $derived(info.follow_date ? daysSince(info.follow_date) : null);
+	// info.follow_date arrives as "YYYY-MM-DD HH:mm:ss" — only the date part
+	// reads naturally in "...부터" ("since ...").
+	let followDateOnly = $derived(info.follow_date ? info.follow_date.split(' ')[0] : '');
 
+	// info.follow_date now comes straight from Chzzk's own API as
+	// "YYYY-MM-DD HH:mm:ss" (a space, not a "T"), which `new Date(...)`
+	// can't parse — swap it for a proper ISO-ish separator instead of
+	// assuming a date-only string.
 	function daysSince(dateStr: string): number {
-		const start = new Date(`${dateStr}T00:00:00`);
+		const start = new Date(dateStr.replace(' ', 'T'));
 		const diffMs = Date.now() - start.getTime();
 		return Math.floor(diffMs / 86_400_000) + 1;
 	}
@@ -65,7 +72,7 @@
 					<span class="pill-label">팔로우</span>
 					<span class="pill-value">{isFollowing ? '팔로잉' : '미팔로우'}</span>
 					<span class="pill-sub"
-						>{isFollowing ? `${followDays}일째 · ${info.follow_date}부터` : ' '}</span
+						>{isFollowing ? `${followDays}일째 · ${followDateOnly}부터` : ' '}</span
 					>
 				</div>
 				<div class="status-pill" class:active={isSubscribed}>

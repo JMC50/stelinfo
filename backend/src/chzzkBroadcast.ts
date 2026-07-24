@@ -121,39 +121,84 @@ async function captureChannelPage(channelId: string): Promise<CapturedResponses>
     return captured;
 }
 
+// chatChannelId lives inside the same live-detail payload the broadcast
+// fetch already captures (content.chatChannelId — present whether the
+// channel is live or not), so it's cached alongside the broadcast instead
+// of triggering a second Playwright capture for callers that need it (see
+// getChatChannelId, used by chzzkProfile.ts for follow/subscribe lookups).
+interface CacheEntry {
+    broadcast: LatestBroadcast | null;
+    chatChannelId: string | null;
+    expiresAt: number;
+}
+
 const CACHE_TTL_MS = 15 * 60 * 1000;
-const cache = new Map<string, { data: LatestBroadcast | null; expiresAt: number }>();
+const cache = new Map<string, CacheEntry>();
+// Dedupes concurrent callers (e.g. getLatestBroadcast + getChatChannelId
+// racing for the same stellarId) onto a single in-flight capture instead of
+// each kicking off its own Playwright page load.
+const inflight = new Map<string, Promise<CacheEntry>>();
 
-export async function getLatestBroadcast(stellarId: string): Promise<LatestBroadcast | null> {
-    const channelId = stellarChannelIds[stellarId];
-    if (!channelId) return null;
-
+async function ensureCached(stellarId: string): Promise<CacheEntry> {
     const cached = cache.get(stellarId);
-    if (cached && cached.expiresAt > Date.now()) return cached.data;
+    if (cached && cached.expiresAt > Date.now()) return cached;
 
-    const { liveDetail, videos } = await captureChannelPage(channelId);
+    const existing = inflight.get(stellarId);
+    if (existing) return existing;
 
-    let result: LatestBroadcast | null = null;
-    const live = liveDetail?.content;
-    if (live?.status === "OPEN") {
-        result = {
-            title: live.liveTitle,
-            date: live.openDate,
-            url: `https://chzzk.naver.com/live/${channelId}`,
-            isLive: true
-        };
-    } else {
-        const latestVideo = videos?.content?.data?.[0];
-        if (latestVideo) {
-            result = {
-                title: latestVideo.videoTitle,
-                date: latestVideo.publishDate,
-                url: `https://chzzk.naver.com/video/${latestVideo.videoNo}`,
-                isLive: false
+    const promise = (async (): Promise<CacheEntry> => {
+        const channelId = stellarChannelIds[stellarId];
+        let entry: CacheEntry;
+
+        if (!channelId) {
+            entry = { broadcast: null, chatChannelId: null, expiresAt: Date.now() + CACHE_TTL_MS };
+        } else {
+            const { liveDetail, videos } = await captureChannelPage(channelId);
+
+            let broadcast: LatestBroadcast | null = null;
+            const live = liveDetail?.content;
+            if (live?.status === "OPEN") {
+                broadcast = {
+                    title: live.liveTitle,
+                    date: live.openDate,
+                    url: `https://chzzk.naver.com/live/${channelId}`,
+                    isLive: true
+                };
+            } else {
+                const latestVideo = videos?.content?.data?.[0];
+                if (latestVideo) {
+                    broadcast = {
+                        title: latestVideo.videoTitle,
+                        date: latestVideo.publishDate,
+                        url: `https://chzzk.naver.com/video/${latestVideo.videoNo}`,
+                        isLive: false
+                    };
+                }
+            }
+
+            entry = {
+                broadcast,
+                chatChannelId: live?.chatChannelId ?? null,
+                expiresAt: Date.now() + CACHE_TTL_MS
             };
         }
-    }
 
-    cache.set(stellarId, { data: result, expiresAt: Date.now() + CACHE_TTL_MS });
-    return result;
+        cache.set(stellarId, entry);
+        inflight.delete(stellarId);
+        return entry;
+    })();
+
+    inflight.set(stellarId, promise);
+    return promise;
+}
+
+export async function getLatestBroadcast(stellarId: string): Promise<LatestBroadcast | null> {
+    return (await ensureCached(stellarId)).broadcast;
+}
+
+// The streamer's chat room id — needed to look up a viewer's follow/
+// subscribe status via the (unauthenticated, public) chat profile-card
+// endpoint. See chzzkProfile.ts.
+export async function getChatChannelId(stellarId: string): Promise<string | null> {
+    return (await ensureCached(stellarId)).chatChannelId;
 }

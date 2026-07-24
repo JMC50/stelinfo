@@ -6,6 +6,7 @@ import express from "express";
 import { getStellarYoutubeSummary } from "./youtube";
 import { getStreamerInfo } from "./streamerInfo";
 import { getLatestBroadcast } from "./chzzkBroadcast";
+import { getFollowSubscribeInfo } from "./chzzkProfile";
 
 const CHZZK_CLIENT_ID = process.env.chzzk_client_id;
 const CHZZK_CLIENT_SECRET = process.env.chzzk_client_secret;
@@ -190,17 +191,25 @@ app.get("/streamer-info/:stellarId", async (req, res) => {
         return;
     }
 
-    const broadcast = await getLatestBroadcast(req.params.stellarId).catch((err) => {
-        console.error("broadcast fetch failed:", err);
-        return null;
-    });
+    const [broadcast, followSubscribe] = await Promise.all([
+        getLatestBroadcast(req.params.stellarId).catch((err) => {
+            console.error("broadcast fetch failed:", err);
+            return null;
+        }),
+        getFollowSubscribeInfo(req.params.stellarId, session.user.channelId).catch((err) => {
+            console.error("follow/subscribe fetch failed:", err);
+            return null;
+        })
+    ]);
 
     res.json({
         ...info,
         last_stream_date: broadcast?.date ?? "",
         last_stream_title: broadcast?.title ?? "",
         last_stream_url: broadcast?.url ?? "",
-        is_live: broadcast?.isLive ?? false
+        is_live: broadcast?.isLive ?? false,
+        follow_date: followSubscribe?.followDate ?? null,
+        subscribe_month: followSubscribe?.subscribeMonths ?? 0
     });
 });
 
