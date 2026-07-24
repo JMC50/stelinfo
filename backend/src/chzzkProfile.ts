@@ -24,7 +24,7 @@ export async function getFollowSubscribeInfo(
     const cached = cache.get(cacheKey);
     if (cached && cached.expiresAt > Date.now()) return cached.data;
 
-    const chatChannelId = await getChatChannelId(stellarId);
+    const chatChannelId = getChatChannelId(stellarId);
     let result: FollowSubscribeInfo | null = null;
 
     if (chatChannelId) {
