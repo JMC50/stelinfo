@@ -95,9 +95,12 @@
 			auth.setXId(trimmed);
 			// Plain ID, not a URL — the verify page's scanner reads this
 			// straight into its id list, and it doubles as a manually
-			// typeable fallback if the QR won't scan.
+			// typeable fallback if the QR won't scan. Generated well above
+			// its ~64px display size so it's always scaled down (never up)
+			// when captured at pixelRatio 3 below — upscaling is what would
+			// soften its edges and hurt scannability.
 			qrDataUrl = await QRCode.toDataURL(share.id, {
-				width: 160,
+				width: 256,
 				margin: 1,
 				color: { dark: '#1a1a2e', light: '#ffffff' }
 			});
@@ -118,8 +121,11 @@
 			// it can measure/rasterize before font/image embedding actually
 			// settles, which is what was shaving the bottom off the export.
 			// A throwaway warm-up render fixes the one that's kept.
-			await toPng(cardEl, { pixelRatio: 2 });
-			const dataUrl = await toPng(cardEl, { pixelRatio: 2 });
+			// pixelRatio 3 matches typical phone screen density (source
+			// avatar art and the QR above are both high-res enough to hold
+			// up at this scale without softening).
+			await toPng(cardEl, { pixelRatio: 4 });
+			const dataUrl = await toPng(cardEl, { pixelRatio: 4 });
 			const link = document.createElement('a');
 			link.download = `stelinfo-${stellarId}-${share?.id}.png`;
 			link.href = dataUrl;
