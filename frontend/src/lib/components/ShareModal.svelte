@@ -281,7 +281,14 @@
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%);
-		width: min(90vw, 380px);
+		/* Fixed width (not vw-scaled) so the card renders at the same
+		   proportions on every device — it used to stretch up to 380px on
+		   wide/desktop viewports, which squashed the ticket into a wider,
+		   shorter shape than the mobile version. Content that needs more
+		   room grows the card taller instead, since nothing here caps
+		   height. The vw fallback only kicks in on screens too narrow to
+		   fit 320px with margin. */
+		width: min(320px, calc(100vw - 32px));
 		max-height: 86vh;
 		overflow-y: auto;
 		background: var(--color-surface);
@@ -619,15 +626,23 @@
 		justify-content: center;
 		width: 20px;
 		height: 20px;
+		padding: 4px;
 		border-radius: 50%;
 		background: var(--color-surface);
 		flex-shrink: 0;
 		overflow: hidden;
 	}
 
+	/* object-fit: contain (rather than a fixed px size) keeps every icon
+	   centered and evenly inset regardless of how much padding each
+	   source SVG's own artwork already has within its viewBox — chzzk.svg
+	   in particular draws edge-to-edge, so a fixed size made it look
+	   larger and off-balance next to the others. */
 	.footer-icon-chip img {
-		width: 11px;
-		height: 11px;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		display: block;
 	}
 
 	.card-id {
