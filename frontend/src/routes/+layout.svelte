@@ -4,6 +4,10 @@
 	import { pwaInfo } from 'virtual:pwa-info';
 	import { auth } from '$lib/state/auth.svelte';
 	import RotateHint from '$lib/components/RotateHint.svelte';
+	import { dev } from '$app/environment';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
+
+	injectAnalytics({ mode: dev ? 'development' : 'production' });
 
 	let { children } = $props();
 
