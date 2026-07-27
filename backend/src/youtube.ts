@@ -129,6 +129,26 @@ async function resolveUploadsPlaylistId(handle: string): Promise<string> {
     return playlistId;
 }
 
+// playlistItems.snippet.publishedAt is when the video was *added to this
+// playlist*, not when it was actually uploaded — a months-old video queued
+// into a playlist yesterday would otherwise look like the newest upload.
+// One extra videos.list call (batched, 1 quota unit regardless of how many
+// ids) swaps in the real upload date for each id.
+async function fetchRealPublishDates(videoIds: string[]): Promise<Map<string, string>> {
+    if (videoIds.length === 0) return new Map();
+    try {
+        const body = await youtubeApiGet("videos", { part: "snippet", id: videoIds.join(",") });
+        const dates = new Map<string, string>();
+        for (const item of body.items ?? []) {
+            if (item.id && item.snippet?.publishedAt) dates.set(item.id, item.snippet.publishedAt);
+        }
+        return dates;
+    } catch (err) {
+        console.error(`videos.list fetch failed for [${videoIds.join(",")}]:`, err);
+        return new Map();
+    }
+}
+
 async function fetchPlaylistItems(playlistId: string, maxResults: number): Promise<YoutubeVideoSummary[]> {
     let body: any;
     try {
@@ -145,8 +165,7 @@ async function fetchPlaylistItems(playlistId: string, maxResults: number): Promi
     }
 
     const items: YoutubePlaylistItem[] = body.items ?? [];
-    // console.log(items);
-    return items
+    const videos = items
         .filter((item) => {
             const snippet = item.snippet;
             if (!snippet?.resourceId?.videoId || !snippet?.publishedAt) return false;
@@ -167,9 +186,19 @@ async function fetchPlaylistItems(playlistId: string, maxResults: number): Promi
                 title: snippet.title ?? "",
                 url: `https://www.youtube.com/watch?v=${videoId}`,
                 thumbnail,
+                // Placeholder — overwritten below with the video's actual
+                // upload date where available.
                 publishedAt: snippet.publishedAt!
             };
         });
+
+    const realDates = await fetchRealPublishDates(videos.map((v) => v.id));
+    for (const video of videos) {
+        const real = realDates.get(video.id);
+        if (real) video.publishedAt = real;
+    }
+
+    return videos;
 }
 
 function mostRecent(videos: YoutubeVideoSummary[]): YoutubeVideoSummary | null {
@@ -179,12 +208,19 @@ function mostRecent(videos: YoutubeVideoSummary[]): YoutubeVideoSummary | null {
     );
 }
 
-async function fetchLatestUpload(handle: string): Promise<YoutubeVideoSummary | null> {
+function sortByRecency(videos: YoutubeVideoSummary[]): YoutubeVideoSummary[] {
+    return [...videos].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+}
+
+// Returns the whole upload list sorted newest-first (rather than just the
+// single newest) so the caller can skip to the runner-up when the newest
+// upload turns out to be the same video as the newest music cover.
+async function fetchLatestUploads(handle: string): Promise<YoutubeVideoSummary[]> {
     const uploadsPlaylistId = await resolveUploadsPlaylistId(handle);
     // The uploads playlist is effectively always newest-first, but a small
-    // page plus an explicit max-by-date pick costs nothing and doesn't rely
+    // page plus an explicit max-by-date sort costs nothing and doesn't rely
     // on that assumption holding forever.
-    return mostRecent(await fetchPlaylistItems(uploadsPlaylistId, 5));
+    return sortByRecency(await fetchPlaylistItems(uploadsPlaylistId, 5));
 }
 
 async function fetchLatestMusicVideo(playlistIds: string[]): Promise<YoutubeVideoSummary | null> {
@@ -204,10 +240,18 @@ export async function getStellarYoutubeSummary(
     const cached = summaryCache.get(stellarId);
     if (cached && cached.expiresAt > Date.now()) return cached.data;
 
-    const [latestVideo, latestMusicVideo] = await Promise.all([
-        fetchLatestUpload(config.handle),
+    const [uploads, latestMusicVideo] = await Promise.all([
+        fetchLatestUploads(config.handle),
         fetchLatestMusicVideo(config.musicPlaylists)
     ]);
+
+    // Music takes priority: if the newest upload is the same video as the
+    // newest music cover, the "latest video" card falls back to the
+    // runner-up upload instead of showing the same video twice.
+    let latestVideo = uploads[0] ?? null;
+    if (latestVideo && latestMusicVideo && latestVideo.id === latestMusicVideo.id) {
+        latestVideo = uploads[1] ?? null;
+    }
 
     const data: StellarYoutubeSummary = { latestVideo, latestMusicVideo };
     summaryCache.set(stellarId, { data, expiresAt: Date.now() + SUMMARY_TTL_MS });
