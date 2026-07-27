@@ -24,7 +24,7 @@
 			rel="noopener noreferrer"
 			aria-label={s.label}
 		>
-			<img src={`/icons/${s.key}.svg`} alt="" />
+			<img src={`/icons/${s.key}.svg`} alt="" class:icon-glyph={s.key === 'chzzk' || s.key === 'x'} />
 		</a>
 	{/each}
 </div>
@@ -60,6 +60,15 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+	}
+
+	/* chzzk/x are bare glyphs on a transparent background (unlike the
+	   other shortcuts, which are pre-made full-bleed square tiles) — sized
+	   down and centered instead of stretched edge-to-edge. */
+	.shortcut-btn img.icon-glyph {
+		width: 55%;
+		height: 55%;
+		object-fit: contain;
 	}
 
 	@keyframes fade-up {

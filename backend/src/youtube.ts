@@ -145,8 +145,18 @@ async function fetchPlaylistItems(playlistId: string, maxResults: number): Promi
     }
 
     const items: YoutubePlaylistItem[] = body.items ?? [];
+    // console.log(items);
     return items
-        .filter((item) => item.snippet?.resourceId?.videoId && item.snippet?.publishedAt)
+        .filter((item) => {
+            const snippet = item.snippet;
+            if (!snippet?.resourceId?.videoId || !snippet?.publishedAt) return false;
+            // Private/deleted videos still show up as playlist items, but
+            // YouTube replaces their snippet with one of these fixed
+            // placeholders instead of omitting the item — skip them so the
+            // next real video shows up instead.
+            if (snippet.title === "Private video" || snippet.title === "Deleted video") return false;
+            return true;
+        })
         .map((item) => {
             const snippet = item.snippet!;
             const videoId = snippet.resourceId!.videoId!;
