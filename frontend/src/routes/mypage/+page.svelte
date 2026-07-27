@@ -21,6 +21,13 @@
 	});
 
 	async function handleRevoke(id: string) {
+		if (
+			!confirm(
+				'삭제하면 다른 사람이 이 인증ID로 더 이상 조회할 수 없어요. 필요하면 나중에 다시 만들 수 있어요. 삭제할까요?'
+			)
+		)
+			return;
+
 		revokingId = id;
 		const ok = await revokeShare(id);
 		if (ok) shares = shares.filter((s) => s.id !== id);

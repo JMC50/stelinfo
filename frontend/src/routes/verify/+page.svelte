@@ -59,13 +59,15 @@
 		}
 	}
 
-	function handleQrScan(id: string) {
+	/** Returns whether `id` was newly added (false if it was already in the list). */
+	function handleQrScan(id: string): boolean {
 		const lines = idsText
 			.split('\n')
 			.map((line) => line.trim())
 			.filter((line) => line.length > 0);
-		if (lines.includes(id)) return;
+		if (lines.includes(id)) return false;
 		idsText = lines.length > 0 ? `${lines.join('\n')}\n${id}` : id;
+		return true;
 	}
 </script>
 

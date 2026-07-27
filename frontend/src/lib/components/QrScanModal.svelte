@@ -1,17 +1,23 @@
 <script lang="ts">
 	import QrScanner from 'qr-scanner';
+	import { onDestroy } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { fade, scale } from 'svelte/transition';
 
-	let { onScan, onClose }: { onScan: (id: string) => void; onClose: () => void } = $props();
+	// onScan reports back whether the id was actually a new addition (vs.
+	// already in the list) — the count and flash below only reflect ids
+	// that were genuinely added.
+	let { onScan, onClose }: { onScan: (id: string) => boolean; onClose: () => void } = $props();
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let errorMessage = $state('');
-	let lastScannedId = $state('');
 	let scannedCount = $state(0);
+	let flash = $state<{ type: 'added' | 'duplicate'; id: string } | null>(null);
 
+	let lastScannedId = '';
 	let lastScannedAt = 0;
 	const RESCAN_COOLDOWN_MS = 2000;
+	let flashTimeout: ReturnType<typeof setTimeout> | undefined;
 
 	function handleResult(text: string) {
 		const id = text.trim();
@@ -23,9 +29,16 @@
 		if (id === lastScannedId && now - lastScannedAt < RESCAN_COOLDOWN_MS) return;
 		lastScannedId = id;
 		lastScannedAt = now;
-		scannedCount += 1;
-		onScan(id);
+
+		const added = onScan(id);
+		if (added) scannedCount += 1;
+
+		flash = { type: added ? 'added' : 'duplicate', id };
+		clearTimeout(flashTimeout);
+		flashTimeout = setTimeout(() => (flash = null), 1100);
 	}
+
+	onDestroy(() => clearTimeout(flashTimeout));
 
 	$effect(() => {
 		if (!videoEl) return;
@@ -71,10 +84,21 @@
 	{:else}
 		<div class="video-wrap">
 			<video bind:this={videoEl} class="scan-video" muted playsinline></video>
+			{#if flash}
+				<div
+					class="scan-flash"
+					class:scan-flash--duplicate={flash.type === 'duplicate'}
+					transition:fade={{ duration: prefersReducedMotion.current ? 0 : 120 }}
+				>
+					<span class="flash-icon">{flash.type === 'added' ? '✅' : '⚠️'}</span>
+					<span class="flash-text">{flash.type === 'added' ? '추가됨' : '이미 추가된 코드'}</span>
+					<span class="flash-id mono">{flash.id}</span>
+				</div>
+			{/if}
 		</div>
 		<p class="scan-status">
-			{#if lastScannedId}
-				✅ 방금 추가: <span class="mono">{lastScannedId}</span>
+			{#if flash}
+				{flash.type === 'added' ? '✅ 목록에 추가했어요' : '⚠️ 이미 목록에 있어요'}
 			{:else}
 				QR을 화면 안에 비춰주세요
 			{/if}
@@ -133,6 +157,7 @@
 	}
 
 	.video-wrap {
+		position: relative;
 		margin-top: 14px;
 		border-radius: var(--radius-md);
 		overflow: hidden;
@@ -145,6 +170,54 @@
 		height: 100%;
 		object-fit: cover;
 		display: block;
+	}
+
+	.scan-flash {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+		background: rgba(31, 157, 90, 0.85);
+		animation: flash-pop 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+
+	.scan-flash--duplicate {
+		background: rgba(214, 150, 20, 0.85);
+	}
+
+	.flash-icon {
+		font-size: 34px;
+	}
+
+	.flash-text {
+		font-size: 15px;
+		font-weight: 800;
+		color: #fff;
+	}
+
+	.flash-id {
+		font-size: 12px;
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	@keyframes flash-pop {
+		from {
+			opacity: 0;
+			transform: scale(0.9);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.scan-flash {
+			animation: none;
+		}
 	}
 
 	.scan-status {

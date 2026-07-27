@@ -131,7 +131,12 @@
 
 	async function handleDelete() {
 		if (!share) return;
-		if (!confirm('이 공유 카드를 삭제할까요? 필요하면 나중에 다시 만들 수 있어요.')) return;
+		if (
+			!confirm(
+				'삭제하면 다른 사람이 이 인증ID로 더 이상 조회할 수 없어요. 필요하면 나중에 다시 만들 수 있어요. 삭제할까요?'
+			)
+		)
+			return;
 
 		deleting = true;
 		deleteError = '';
@@ -240,7 +245,7 @@
 			</div>
 		</div>
 
-		<p class="verify-note">이 카드는 stelinfo 서버가 직접 발급한 위조 방지 인증ID를 포함해요.</p>
+		<p class="verify-note">서버가 직접 발급한 위조 방지 카드예요.</p>
 
 		<div class="card-actions">
 			<button class="submit-btn" onclick={handleDownload} disabled={downloading}>
@@ -393,13 +398,15 @@
 	/* --- Certificate card --- */
 
 	/* The capture target for html-to-image. card-frame's box-shadow needs
-	   room to render (it bleeds ~18px above, ~30px sides, ~42px below the
+	   room to render (it bleeds ~5px above, ~8px sides, ~11px below the
 	   box) — without this buffer the export's canvas is sized exactly to
 	   card-frame and the shadow gets cut off, worse at the bottom since
-	   the shadow's y-offset pushes it down. */
+	   the shadow's y-offset pushes it down. Kept close to that minimum
+	   (rather than padded generously) since extra room here just reads as
+	   dead space around the card. */
 	.card-export {
-		margin-top: 16px;
-		padding: 20px 30px 48px;
+		margin-top: 6px;
+		padding: 7px 10px 14px;
 	}
 
 	.card-frame {
@@ -412,7 +419,7 @@
 			color-mix(in srgb, var(--stellar-color) 45%, #1a1a2e) 100%
 		);
 		color: #ffffff;
-		box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 		animation: card-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 		animation-delay: 0.05s;
 		/* Punches two real transparent holes at the divider's edges (see
@@ -624,7 +631,7 @@
 	}
 
 	.verify-note {
-		margin-top: 10px;
+		margin-top: 0;
 		font-size: 11px;
 		line-height: 1.5;
 		color: var(--color-text-muted);
