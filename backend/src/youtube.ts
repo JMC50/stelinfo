@@ -46,7 +46,7 @@ export const stellarYoutubeConfig: Record<string, StellarYoutubeConfig> = {
     },
     Tenko_shibuki: {
         handle: "@tenkoshibuki",
-        musicPlaylists: ["PLKVNBOcsLJlVii-8YwoZTD3o4gh5CnIND"]
+        musicPlaylists: ["PLKVNBOcsLJlVii-8YwoZTD3o4gh5CnIND", "PLanLo2fF2MkY"]
     },
     Aokumo_rin: {
         handle: "@aokumorin",
