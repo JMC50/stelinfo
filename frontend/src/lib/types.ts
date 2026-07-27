@@ -1,6 +1,7 @@
 export interface ChzzkUser {
 	channelId: string;
 	channelName: string;
+	xId: string | null;
 }
 
 export interface StellarLinks {
@@ -33,6 +34,32 @@ export interface StellarYoutubeSummary {
 	latestVideo: YoutubeVideoSummary | null;
 	latestMusicVideo: YoutubeVideoSummary | null;
 }
+
+export interface ShareRecord {
+	id: string;
+	stellarId: string;
+	memberName: string;
+	claimedHandle: string;
+	followDate: string | null;
+	subscribeMonth: number;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export type VerifyResult =
+	| { id: string; found: false }
+	| {
+			id: string;
+			found: true;
+			stellarId: string;
+			memberName: string;
+			claimedHandle: string;
+			channelName: string;
+			followDays: number;
+			subscribeMonth: number;
+			stellarMismatch: boolean;
+			meetsCondition: boolean;
+	  };
 
 export interface StreamerInfo {
 	follow_date: string | null;

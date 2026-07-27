@@ -1,7 +1,8 @@
 import express from "express";
+import { AUTH_COOKIE, AUTH_COOKIE_OPTIONS, requireAuth, signAuthToken, type UserRow } from "../auth";
 import { buildAuthorizeUrl, consumeState, exchangeCodeForToken, fetchChzzkUser } from "../chzzkAuth";
 import { FRONTEND_URL } from "../config";
-import { createSession, deleteSession, requireAuth, SESSION_COOKIE, type Session } from "../session";
+import { upsertUser } from "../users";
 
 export const authRouter = express.Router();
 
@@ -21,17 +22,14 @@ authRouter.get("/callback", async (req, res) => {
         const token = await exchangeCodeForToken(code, state);
         const user = await fetchChzzkUser(token.accessToken);
 
-        const sessionId = createSession({
+        upsertUser({
+            channelId: user.channelId,
+            channelName: user.channelName,
             accessToken: token.accessToken,
-            refreshToken: token.refreshToken,
-            user
+            refreshToken: token.refreshToken
         });
 
-        res.cookie(SESSION_COOKIE, sessionId, {
-            httpOnly: true,
-            sameSite: "lax",
-            maxAge: 30 * 24 * 60 * 60 * 1000
-        });
+        res.cookie(AUTH_COOKIE, signAuthToken(user.channelId), AUTH_COOKIE_OPTIONS);
         res.redirect(FRONTEND_URL);
     } catch (err) {
         console.error("chzzk oauth callback failed:", err);
@@ -40,13 +38,11 @@ authRouter.get("/callback", async (req, res) => {
 });
 
 authRouter.get("/me", requireAuth, (_req, res) => {
-    const session = res.locals.session as Session;
-    res.json(session.user);
+    const user = res.locals.user as UserRow;
+    res.json({ channelId: user.channel_id, channelName: user.channel_name, xId: user.x_id });
 });
 
-authRouter.post("/logout", (req, res) => {
-    const sessionId = req.cookies?.[SESSION_COOKIE];
-    if (sessionId) deleteSession(sessionId);
-    res.clearCookie(SESSION_COOKIE);
+authRouter.post("/logout", (_req, res) => {
+    res.clearCookie(AUTH_COOKIE);
     res.status(204).end();
 });

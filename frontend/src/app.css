@@ -42,8 +42,10 @@ body {
 	text-rendering: optimizeLegibility;
 }
 
-button {
+button,
+a {
 	font-family: inherit;
+	-webkit-tap-highlight-color: transparent;
 }
 
 h1,

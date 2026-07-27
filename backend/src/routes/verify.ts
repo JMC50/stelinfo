@@ -1,0 +1,84 @@
+import express from "express";
+import { requireAuth } from "../auth";
+import db from "../db";
+import { normalizeShareId } from "../shares";
+import { getStreamerInfo } from "../streamerInfo";
+
+export const verifyRouter = express.Router();
+
+const MAX_IDS_PER_REQUEST = 200;
+
+interface ShareWithOwner {
+    id: string;
+    stellar_id: string;
+    claimed_handle: string;
+    follow_date: string | null;
+    subscribe_month: number;
+    channel_name: string;
+}
+
+const lookupStmt = db.prepare(`
+    SELECT shares.id, shares.stellar_id, shares.claimed_handle, shares.follow_date, shares.subscribe_month,
+           users.channel_name
+    FROM shares
+    JOIN users ON users.channel_id = shares.channel_id
+    WHERE shares.id = ? AND shares.revoked_at IS NULL
+`);
+
+// Same "days since" convention InfoDetail.svelte uses for display — a
+// follow_date of today counts as day 1, not day 0.
+function followDaysSince(followDate: string): number {
+    const start = new Date(followDate.replace(" ", "T"));
+    const diffMs = Date.now() - start.getTime();
+    return Math.floor(diffMs / 86_400_000) + 1;
+}
+
+verifyRouter.post("/verify/batch", requireAuth, (req, res) => {
+    const { ids, minFollowDays, minSubscribeMonths, stellarId } = req.body ?? {};
+
+    if (!Array.isArray(ids) || ids.some((id) => typeof id !== "string")) {
+        res.status(400).json({ error: "ids must be an array of strings" });
+        return;
+    }
+    if (ids.length === 0) {
+        res.json([]);
+        return;
+    }
+    if (ids.length > MAX_IDS_PER_REQUEST) {
+        res.status(400).json({ error: `at most ${MAX_IDS_PER_REQUEST} ids per request` });
+        return;
+    }
+
+    const minDays = typeof minFollowDays === "number" && minFollowDays > 0 ? minFollowDays : null;
+    const minMonths = typeof minSubscribeMonths === "number" && minSubscribeMonths > 0 ? minSubscribeMonths : null;
+    // Optional: scope the check to one stellar, so a card shared for a
+    // different member's giveaway doesn't quietly pass.
+    const requiredStellarId = typeof stellarId === "string" && stellarId ? stellarId : null;
+
+    const results = ids.map((id) => {
+        const share = lookupStmt.get(normalizeShareId(id)) as ShareWithOwner | undefined;
+        if (!share) {
+            return { id, found: false as const };
+        }
+
+        const followDays = share.follow_date ? followDaysSince(share.follow_date) : 0;
+        const meetsFollow = minDays === null || followDays >= minDays;
+        const meetsSubscribe = minMonths === null || share.subscribe_month >= minMonths;
+        const stellarMismatch = requiredStellarId !== null && share.stellar_id !== requiredStellarId;
+
+        return {
+            id,
+            found: true as const,
+            stellarId: share.stellar_id,
+            memberName: getStreamerInfo(share.stellar_id)?.memberName ?? share.stellar_id,
+            claimedHandle: share.claimed_handle,
+            channelName: share.channel_name,
+            followDays,
+            subscribeMonth: share.subscribe_month,
+            stellarMismatch,
+            meetsCondition: meetsFollow && meetsSubscribe && !stellarMismatch
+        };
+    });
+
+    res.json(results);
+});

@@ -1,0 +1,212 @@
+{
+  "backend/package.json": {
+    "mtime": 1784746536.6226506,
+    "ast_hash": "73ddf762489d01852977fcaa48ac147d",
+    "semantic_hash": ""
+  },
+  "backend/src/index.ts": {
+    "mtime": 1784750575.4398582,
+    "ast_hash": "a59d6e4e177ae35971475772ba89f0bf",
+    "semantic_hash": ""
+  },
+  "backend/tsconfig.json": {
+    "mtime": 1784679301.279946,
+    "ast_hash": "4d837c5d80f222c62a985aea9c5bee33",
+    "semantic_hash": ""
+  },
+  "frontend/.vscode/extensions.json": {
+    "mtime": 1784594197.393945,
+    "ast_hash": "7ea92a95edaa521fbff06f607dd92e43",
+    "semantic_hash": "7ea92a95edaa521fbff06f607dd92e43"
+  },
+  "frontend/eslint.config.js": {
+    "mtime": 1784594197.40133,
+    "ast_hash": "321298f6b69d110fd60302b48a8f9252",
+    "semantic_hash": "321298f6b69d110fd60302b48a8f9252"
+  },
+  "frontend/package.json": {
+    "mtime": 1784602086.7251968,
+    "ast_hash": "ddfac4f2d60499efbc6aab089431eaf2",
+    "semantic_hash": ""
+  },
+  "frontend/prettier.config.js": {
+    "mtime": 1784594187.5134354,
+    "ast_hash": "8e20d302985b1ae15bcb1de36146a430",
+    "semantic_hash": "8e20d302985b1ae15bcb1de36146a430"
+  },
+  "frontend/src/app.d.ts": {
+    "mtime": 1784594185.5896876,
+    "ast_hash": "78b56494b3f78d7f9bacda13678f159e",
+    "semantic_hash": "78b56494b3f78d7f9bacda13678f159e"
+  },
+  "frontend/src/lib/components/InfoDetail.svelte": {
+    "mtime": 1784747992.681176,
+    "ast_hash": "fec469c11b0b8fde6f173a0737a80e53",
+    "semantic_hash": ""
+  },
+  "frontend/src/lib/components/LoginScreen.svelte": {
+    "mtime": 1784748243.622682,
+    "ast_hash": "336f51693494a2816261d87183abd21b",
+    "semantic_hash": ""
+  },
+  "frontend/src/lib/components/StellarGrid.svelte": {
+    "mtime": 1784739280.0599382,
+    "ast_hash": "e63aa9fc66cbad629d3b870861ec3ba6",
+    "semantic_hash": ""
+  },
+  "frontend/src/lib/data/stellars.ts": {
+    "mtime": 1784741811.3885496,
+    "ast_hash": "d1d09faf233add2aba3fd6911977e577",
+    "semantic_hash": ""
+  },
+  "frontend/src/lib/index.ts": {
+    "mtime": 1784594185.5901875,
+    "ast_hash": "ffcb0e97b69eb555d5739e9efe961ca0",
+    "semantic_hash": "ffcb0e97b69eb555d5739e9efe961ca0"
+  },
+  "frontend/src/lib/types.ts": {
+    "mtime": 1784746793.146565,
+    "ast_hash": "4a16dcceda4f28a9631aa8af7c67a23e",
+    "semantic_hash": ""
+  },
+  "frontend/src/routes/+layout.svelte": {
+    "mtime": 1784596047.562916,
+    "ast_hash": "e5271b2ac42acce74822edc757b1a876",
+    "semantic_hash": "e5271b2ac42acce74822edc757b1a876"
+  },
+  "frontend/src/routes/+page.svelte": {
+    "mtime": 1784745684.60234,
+    "ast_hash": "353ba9832ec8167f1b383dd22847ce32",
+    "semantic_hash": ""
+  },
+  "frontend/tsconfig.json": {
+    "mtime": 1784594185.5921936,
+    "ast_hash": "c610e6d5aeb2c3bcf0b9f1b90599250e",
+    "semantic_hash": "c610e6d5aeb2c3bcf0b9f1b90599250e"
+  },
+  "frontend/vite.config.ts": {
+    "mtime": 1784602129.0456462,
+    "ast_hash": "009c05bcd31eb095960578537d1ae2d9",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1784669648.742461,
+    "ast_hash": "7fbd2c2386df3d69664856f5ffd770d1",
+    "semantic_hash": ""
+  },
+  "frontend/README.md": {
+    "mtime": 1784594187.5395885,
+    "ast_hash": "5fa6bed7543c601a8a7b1c0d1a5a79fb",
+    "semantic_hash": "5fa6bed7543c601a8a7b1c0d1a5a79fb"
+  },
+  "frontend/src/app.html": {
+    "mtime": 1784669649.7624364,
+    "ast_hash": "a6d4f5ea16911121350b8b03cf1c8ffd",
+    "semantic_hash": ""
+  },
+  "frontend/src/lib/assets/favicon.svg": {
+    "mtime": 1784594076.0002692,
+    "ast_hash": "a0d1b540c1b9a2a920d5f6cae983118a",
+    "semantic_hash": "a0d1b540c1b9a2a920d5f6cae983118a"
+  },
+  "frontend/static/images/stellars/Akane_lize.webp": {
+    "mtime": 1777897469.299903,
+    "ast_hash": "71e9563f1346e480c94d21222d082ddc",
+    "semantic_hash": "71e9563f1346e480c94d21222d082ddc"
+  },
+  "frontend/static/images/stellars/Aokumo_rin.webp": {
+    "mtime": 1777897452.9604964,
+    "ast_hash": "6a5f82a8ebb2fca2812a343d1adc5db9",
+    "semantic_hash": "6a5f82a8ebb2fca2812a343d1adc5db9"
+  },
+  "frontend/static/images/stellars/Arahashi_tabi.webp": {
+    "mtime": 1777897487.4901183,
+    "ast_hash": "dab8e8ada267b1af91ad9c8c8d67b889",
+    "semantic_hash": "dab8e8ada267b1af91ad9c8c8d67b889"
+  },
+  "frontend/static/images/stellars/Ayatsuno_yuni.webp": {
+    "mtime": 1777897372.3566542,
+    "ast_hash": "d73db9fd577b0677df486743b4b31e3d",
+    "semantic_hash": "d73db9fd577b0677df486743b4b31e3d"
+  },
+  "frontend/static/images/stellars/Gangzi.webp": {
+    "mtime": 1777897073.577398,
+    "ast_hash": "292509cee7ae4e06924edab0d2fdb27e",
+    "semantic_hash": "292509cee7ae4e06924edab0d2fdb27e"
+  },
+  "frontend/static/images/stellars/Hanako_nana.webp": {
+    "mtime": 1777897442.5541291,
+    "ast_hash": "40fa38d1e643b24c27dfd54528c9fa44",
+    "semantic_hash": "40fa38d1e643b24c27dfd54528c9fa44"
+  },
+  "frontend/static/images/stellars/Neneko_mashiro.webp": {
+    "mtime": 1777897478.3915946,
+    "ast_hash": "38f0ee4ba5c57dc3044cb1ac6befd844",
+    "semantic_hash": "38f0ee4ba5c57dc3044cb1ac6befd844"
+  },
+  "frontend/static/images/stellars/Sakihane_huya.webp": {
+    "mtime": 1777897524.430714,
+    "ast_hash": "bbddea88ea5a57c6b3f4f61cb228a1d6",
+    "semantic_hash": "bbddea88ea5a57c6b3f4f61cb228a1d6"
+  },
+  "frontend/static/images/stellars/Shirayuki_hina.webp": {
+    "mtime": 1777897436.3461947,
+    "ast_hash": "e1dc7cafc66d8317c3b79ec4d1279e9d",
+    "semantic_hash": "e1dc7cafc66d8317c3b79ec4d1279e9d"
+  },
+  "frontend/static/images/stellars/Tenko_shibuki.webp": {
+    "mtime": 1777897427.1825275,
+    "ast_hash": "5d2141d926050329acb3ba105bf2b5a1",
+    "semantic_hash": "5d2141d926050329acb3ba105bf2b5a1"
+  },
+  "frontend/static/images/stellars/Yuzuha_riko.webp": {
+    "mtime": 1777897504.6507733,
+    "ast_hash": "71b25ac1e9cbb62a75701e5a29719277",
+    "semantic_hash": "71b25ac1e9cbb62a75701e5a29719277"
+  },
+  "backend/src/chzzkBroadcast.ts": {
+    "mtime": 1784756615.1472936,
+    "ast_hash": "7579cb28d444434926307ee6c378fd97",
+    "semantic_hash": ""
+  },
+  "backend/src/streamerInfo.ts": {
+    "mtime": 1784747412.055922,
+    "ast_hash": "70d37b9dbeaca5ead0486088c6f33a3e",
+    "semantic_hash": ""
+  },
+  "backend/src/youtube.ts": {
+    "mtime": 1784744757.7054055,
+    "ast_hash": "ffbc451b5651f26abc96cc155c1c9bf2",
+    "semantic_hash": ""
+  },
+  "frontend/static/icons/cafe.svg": {
+    "mtime": 1778010508.899435,
+    "ast_hash": "cc90d7b01abfee0c800749216e598013",
+    "semantic_hash": ""
+  },
+  "frontend/static/icons/chzzk.svg": {
+    "mtime": 1778010500.458955,
+    "ast_hash": "ebbe97aa3320a1fb9a819dd6e4ebbc07",
+    "semantic_hash": ""
+  },
+  "frontend/static/icons/instagram.svg": {
+    "mtime": 1784739864.9639132,
+    "ast_hash": "397f7e52564f4753d211d6b68f78243f",
+    "semantic_hash": ""
+  },
+  "frontend/static/icons/link.svg": {
+    "mtime": 1784747906.508778,
+    "ast_hash": "44bfd9013f68a206e3b5a08aedf355b1",
+    "semantic_hash": ""
+  },
+  "frontend/static/icons/x.svg": {
+    "mtime": 1778010504.9228253,
+    "ast_hash": "1f044ccede3d2fc48821411f96affda8",
+    "semantic_hash": ""
+  },
+  "frontend/static/icons/youtube.svg": {
+    "mtime": 1778010517.811868,
+    "ast_hash": "d68d6198c2081e24483f6f56f2c6ec8c",
+    "semantic_hash": ""
+  }
+}

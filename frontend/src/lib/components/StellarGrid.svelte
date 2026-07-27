@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ChzzkUser, StellarProfile } from '$lib/types';
+	import SideMenu from '$lib/components/SideMenu.svelte';
 	import StellarTile from '$lib/components/StellarTile.svelte';
 
 	let {
@@ -22,14 +23,16 @@
 <section class="select-screen">
 	<div class="select-inner">
 		<header class="select-header">
-			<button class="logout-btn" onclick={onLogout}>로그아웃</button>
-			<div class="user-chip">
-				<div class="user-avatar">{user.channelName.charAt(0)}</div>
-				<div class="user-text">
-					<p class="user-hello">안녕하세요 👋</p>
-					<p class="user-name">{user.channelName}님</p>
+			<div class="header-top">
+				<SideMenu {user} onLogout={onLogout} />
+				<div class="user-chip">
+					<div class="user-avatar">{user.channelName.charAt(0)}</div>
+					<div class="user-text">
+						<p class="user-hello">안녕하세요 👋</p>
+						<p class="user-name">{user.channelName}님</p>
+					</div>
+					<span class="connected-badge">연동됨</span>
 				</div>
-				<span class="connected-badge">연동됨</span>
 			</div>
 			<h1>확인할 스텔라를 선택해주세요</h1>
 			<p class="select-desc">선택한 스텔라와의 팔로우・구독 기록과 정보를 보여드려요.</p>
@@ -63,29 +66,11 @@
 		width: 100%;
 	}
 
-	.select-header {
-		position: relative;
-	}
-
-	.logout-btn {
-		position: absolute;
-		top: 0;
-		right: 0;
-		background: var(--color-surface);
-		border: none;
-		border-radius: 999px;
-		padding: 8px 14px;
-		font-size: 11px;
-		font-weight: 600;
-		color: var(--color-text-muted);
-		box-shadow: var(--shadow-soft);
-		cursor: pointer;
-		opacity: 0;
-		animation: fade-up 0.3s ease-out 0ms both;
-	}
-
-	.logout-btn:active {
-		transform: scale(0.96);
+	.header-top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 10px;
 	}
 
 	.user-chip {
@@ -174,7 +159,6 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.logout-btn,
 		.user-chip,
 		.select-header h1,
 		.select-desc {

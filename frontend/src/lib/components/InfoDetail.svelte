@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { PUBLIC_SERVER_URL } from '$env/static/public';
 	import type { ChzzkUser, StellarLinks, StellarYoutubeSummary, StreamerInfo } from '$lib/types';
+	import ShareModal from '$lib/components/ShareModal.svelte';
 	import StellarShortcutRow from '$lib/components/StellarShortcutRow.svelte';
 	import StellarVideoRow from '$lib/components/StellarVideoRow.svelte';
 
@@ -39,6 +40,7 @@
 	}
 
 	let youtube = $state<StellarYoutubeSummary | null>(null);
+	let shareModalOpen = $state(false);
 
 	onMount(async () => {
 		const res = await fetch(`${PUBLIC_SERVER_URL}/youtube/${stellarId}`);
@@ -48,9 +50,30 @@
 
 <section class="detail" style={`--stellar-color:${info.HEX}; --stellar-text:${info.text_HEX}`}>
 	<div class="detail-inner">
-		<button class="back-btn" onclick={onBack} aria-label="스텔라 목록으로 돌아가기">
-			<span aria-hidden="true">←</span> 목록으로
-		</button>
+		<div class="top-bar">
+			<button class="back-btn" onclick={onBack} aria-label="스텔라 목록으로 돌아가기">
+				<span aria-hidden="true">←</span> 목록으로
+			</button>
+			<button class="share-btn" onclick={() => (shareModalOpen = true)} aria-label="공유 카드 만들기">
+				<img src="/icons/share.svg" alt="" />
+				공유
+			</button>
+		</div>
+
+		{#if shareModalOpen}
+			<ShareModal
+				{stellarId}
+				memberName={info.memberName}
+				engName={info.stellar}
+				image={image}
+				oshimark={info.oshimark}
+				oshimark1={info.oshimark1}
+				hex={info.HEX}
+				channelName={user.channelName}
+				xId={user.xId}
+				onClose={() => (shareModalOpen = false)}
+			/>
+		{/if}
 
 		<div class="detail-grid">
 			<div class="hero">
@@ -135,8 +158,15 @@
 		display: contents;
 	}
 
-	.back-btn {
-		align-self: flex-start;
+	.top-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+
+	.back-btn,
+	.share-btn {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
@@ -149,6 +179,11 @@
 		color: var(--color-text);
 		box-shadow: 0 4px 12px rgba(134, 127, 219, 0.14);
 		cursor: pointer;
+	}
+
+	.share-btn img {
+		width: 14px;
+		height: 14px;
 	}
 
 	.hero {

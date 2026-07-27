@@ -18,6 +18,13 @@ async function logout(): Promise<void> {
 	user = null;
 }
 
+// Keeps the cached user in sync with what the server just persisted, so a
+// share modal opened again later in the same session pre-fills with the
+// latest X ID instead of the one from page load.
+function setXId(xId: string): void {
+	if (user) user = { ...user, xId };
+}
+
 export const auth = {
 	get user() {
 		return user;
@@ -26,5 +33,6 @@ export const auth = {
 		return checked;
 	},
 	check,
-	logout
+	logout,
+	setXId
 };
