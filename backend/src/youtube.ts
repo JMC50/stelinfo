@@ -228,7 +228,7 @@ async function fetchLatestMusicVideo(playlistIds: string[]): Promise<YoutubeVide
     return mostRecent(lists.flat());
 }
 
-const SUMMARY_TTL_MS = 30 * 60 * 1000;
+const SUMMARY_TTL_MS = 10 * 60 * 1000;
 const summaryCache = new Map<string, { data: StellarYoutubeSummary; expiresAt: number }>();
 
 export async function getStellarYoutubeSummary(
