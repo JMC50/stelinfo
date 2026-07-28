@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /select
+Disallow: /stellar/
+Disallow: /mypage
+Disallow: /verify
+
+Sitemap: https://stelinfo.kr/sitemap.xml
