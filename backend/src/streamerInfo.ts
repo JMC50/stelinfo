@@ -18,8 +18,8 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
     Gangzi: {
         memberName: "강지",
         stellar: "Gangzi",
-        oshimark: "",
-        oshimark1: "",
+        oshimark: "🥔",
+        oshimark1: "⭐",
         HEX: "#8182B8",
         stellar_short_name: "강지",
         text_HEX: "#FFFFFF"
