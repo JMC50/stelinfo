@@ -56,6 +56,18 @@
 	// the divider's position shifts with hero content height.
 	let notchY = $state(-999);
 
+	// Diffing raw elapsed ms (÷ 86_400_000) only ticks over once a full 24h
+	// has passed since the exact follow timestamp, so checking again the
+	// next calendar day can still show the same count. Truncate both sides
+	// to midnight first so this increments once per calendar day instead.
+	function daysSince(dateStr: string): number {
+		const start = new Date(dateStr.replace(' ', 'T'));
+		const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+		const now = new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+		return Math.round((today - startDay) / 86_400_000) + 1;
+	}
+
 	$effect(() => {
 		if (step !== 'card') return;
 		let cancelled = false;
@@ -72,8 +84,7 @@
 
 	let followDays = $derived.by(() => {
 		if (!share?.followDate) return null;
-		const start = new Date(share.followDate.replace(' ', 'T'));
-		return Math.floor((Date.now() - start.getTime()) / 86_400_000) + 1;
+		return daysSince(share.followDate);
 	});
 
 	let issuedDate = $derived(

@@ -33,10 +33,16 @@
 	// "YYYY-MM-DD HH:mm:ss" (a space, not a "T"), which `new Date(...)`
 	// can't parse — swap it for a proper ISO-ish separator instead of
 	// assuming a date-only string.
+	// Diffing raw elapsed ms (÷ 86_400_000) only ticks over once a full 24h
+	// has passed since the exact follow timestamp, so checking again the
+	// next calendar day can still show the same count. Truncate both sides
+	// to midnight first so this increments once per calendar day instead.
 	function daysSince(dateStr: string): number {
 		const start = new Date(dateStr.replace(' ', 'T'));
-		const diffMs = Date.now() - start.getTime();
-		return Math.floor(diffMs / 86_400_000) + 1;
+		const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+		const now = new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+		return Math.round((today - startDay) / 86_400_000) + 1;
 	}
 
 	let youtube = $state<StellarYoutubeSummary | null>(null);

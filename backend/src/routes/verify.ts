@@ -26,11 +26,15 @@ const lookupStmt = db.prepare(`
 `);
 
 // Same "days since" convention InfoDetail.svelte uses for display — a
-// follow_date of today counts as day 1, not day 0.
+// follow_date of today counts as day 1, not day 0. Truncating both sides to
+// midnight (rather than diffing raw elapsed ms) makes this tick over once
+// per calendar day instead of once per full 24h from the exact follow time.
 function followDaysSince(followDate: string): number {
     const start = new Date(followDate.replace(" ", "T"));
-    const diffMs = Date.now() - start.getTime();
-    return Math.floor(diffMs / 86_400_000) + 1;
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    return Math.round((today - startDay) / 86_400_000) + 1;
 }
 
 verifyRouter.post("/verify/batch", requireAuth, (req, res) => {
