@@ -18,7 +18,7 @@ app.get("/", (_req, res) => {
 });
 
 app.get("/health", async (req, res) => {
-    res.json({ status: "ok" });
+    res.json({ ok: true });
 });
 
 app.use(authRouter);
