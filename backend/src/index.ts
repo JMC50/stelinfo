@@ -17,6 +17,10 @@ app.get("/", (_req, res) => {
     res.send("Hello, World!");
 });
 
+app.get("/health", async (req, res) => {
+    res.json({ status: "ok" });
+});
+
 app.use(authRouter);
 app.use(streamerRouter);
 app.use(shareRouter);
