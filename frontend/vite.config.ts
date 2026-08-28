@@ -24,7 +24,7 @@ export default defineConfig({
 			manifest: {
 				name: 'StelInfo',
 				short_name: 'StelInfo',
-				description: '스텔라이브 팔로우・정보 확인 서비스',
+				description: '스텔라이브 팔로우・구독 정보 확인 서비스',
 				start_url: '/',
 				display: 'standalone',
 				background_color: '#dae0fc',

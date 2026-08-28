@@ -87,6 +87,15 @@
 	});
 </script>
 
+<!-- PC/tablet: direct shortcut links instead of hiding navigation behind a
+     hamburger — a drawer makes more sense on mobile where top-bar space is
+     tight, but just adds an extra click on a wide screen with room to spare. -->
+<nav class="desktop-nav" aria-label="바로가기">
+	<button class="nav-link" onclick={() => go('/mypage')}>마이페이지</button>
+	<button class="nav-link" onclick={() => go('/verify')}>인증 확인</button>
+	<button class="nav-link nav-link--danger" onclick={handleLogout}>로그아웃</button>
+</nav>
+
 <button class="menu-trigger" onclick={openMenu} aria-label="메뉴 열기">
 	<img src="/icons/menu.svg" alt="" />
 </button>
@@ -151,6 +160,34 @@
 	.menu-trigger img {
 		width: 18px;
 		height: 18px;
+	}
+
+	.desktop-nav {
+		display: none;
+	}
+
+	.nav-link {
+		display: inline-flex;
+		align-items: center;
+		background: var(--color-surface);
+		border: none;
+		border-radius: 999px;
+		padding: 8px 16px;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--color-text);
+		box-shadow: var(--shadow-soft);
+		cursor: pointer;
+		opacity: 0;
+		animation: fade-up 0.3s ease-out 0ms both;
+	}
+
+	.nav-link:active {
+		transform: scale(0.96);
+	}
+
+	.nav-link--danger {
+		color: #d64545;
 	}
 
 	.menu-overlay {
@@ -281,13 +318,29 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.menu-trigger {
+		.menu-trigger,
+		.nav-link {
 			animation: none;
 			opacity: 1;
 		}
 		.menu-overlay,
 		.menu-drawer {
 			transition: none;
+		}
+	}
+
+	/* PC/tablet: swap the hamburger+drawer for inline shortcut links. The
+	   drawer markup stays in the DOM either way — it just can no longer be
+	   opened, since its only trigger is hidden here too. */
+	@media (min-width: 768px) {
+		.menu-trigger {
+			display: none;
+		}
+
+		.desktop-nav {
+			display: flex;
+			align-items: center;
+			gap: 8px;
 		}
 	}
 </style>
