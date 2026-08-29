@@ -4,6 +4,12 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	// workbox-precaching (used by src/service-worker.ts) reads
+	// process.env.NODE_ENV, which isn't defined in the service worker's own
+	// build context otherwise.
+	define: {
+		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production')
+	},
 	plugins: [
 		sveltekit({
 			compilerOptions: {
@@ -19,6 +25,24 @@ export default defineConfig({
 			serviceWorker: { register: false }
 		}),
 		SvelteKitPWA({
+			// Custom service worker (src/service-worker.ts) instead of the
+			// auto-generated one, so it can add push/notificationclick
+			// handlers -- generateSW has no hook for custom event listeners.
+			strategies: 'injectManifest',
+			srcDir: 'src',
+			filename: 'service-worker.ts',
+			injectManifest: {
+				globPatterns: ['client/**/*.{js,css,ico,png,svg,webp,webmanifest}']
+			},
+			// The service worker is normally build-only; this turns it on for
+			// `vite dev` too so push notifications (which need a real SW
+			// registration) can be tested locally without a full production
+			// build -- handy since the Vercel adapter step currently can't
+			// finish on Windows (unrelated symlink/EPERM issue).
+			devOptions: {
+				enabled: true,
+				type: 'module'
+			},
 			registerType: 'autoUpdate',
 			includeAssets: ['icons/icon.png'],
 			manifest: {

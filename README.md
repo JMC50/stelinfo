@@ -28,10 +28,11 @@
 stelinfo/
 ├─ backend/        # Express API 서버
 │  └─ src/
-│     ├─ routes/    # auth, streamer, share, verify 라우터
+│     ├─ routes/    # auth, streamer, share, verify, push, webhook 라우터
 │     ├─ db.ts       # SQLite 스키마/초기화
 │     ├─ users.ts    # 유저 테이블 접근
 │     ├─ shares.ts   # 공유 카드(인증ID) 테이블 접근
+│     ├─ pushSubscriptions.ts / push.ts  # 푸시 구독 저장 및 발송
 │     ├─ chzzkAuth.ts / chzzkProfile.ts / chzzkBroadcast.ts
 │     └─ youtube.ts  # 유튜브 최신 영상/음악 커버 조회
 └─ frontend/       # SvelteKit 앱
@@ -94,6 +95,8 @@ npm run dev
 | `jwt_secret` | 로그인 세션 서명용 랜덤 문자열 |
 | `port` | 백엔드 서버 포트 |
 | `subserver_port` | 방송 상태를 폴링하는 별도 [`stellar_status`](https://github.com/JMC50/stellar_status) 서비스 포트 (아래 참고) |
+| `broadcast_webhook_secret` | `stellar_status`가 "방송 시작" 웹훅을 보낼 때 쓰는 공유 시크릿. `stellar_status`의 `STELINFO_WEBHOOK_SECRET`과 같은 값이어야 함 |
+| `vapid_public_key`, `vapid_private_key`, `vapid_subject` | 브라우저 푸시 알림(Web Push) 발송용 VAPID 키. `npx web-push generate-vapid-keys`로 한 번 생성해서 재사용 |
 
 ### `frontend/.env`
 
@@ -105,6 +108,7 @@ npm run dev
 ## 알아두면 좋은 점
 
 - **방송 상태는 별도 저장소 [`stellar_status`](https://github.com/JMC50/stellar_status)에서 가져와요.** 방송 중 여부/최근 방송 정보(`chzzkBroadcast.ts`)는 각 스텔라의 방송 상태를 주기적으로 폴링하는 이 서브서버를 통해 조회돼요. 이 서비스를 안 띄워도 나머지 기능(팔로우/구독 조회, 공유, 인증 확인 등)은 정상 동작하고, 최근 방송 카드만 비어있게 표시돼요.
+- **방송 시작 푸시 알림**은 `/notifications` 페이지에서 스텔라별로 켜고 끌 수 있어요(기본값 OFF, 현재 베타). `stellar_status`가 오프라인→라이브 전환을 감지하면 `/webhooks/broadcast-started`로 알려주고, 이 서버가 Web Push(`web-push`, VAPID)로 구독자들에게 팬아웃 발송해요. 알림 아이콘은 chzzk의 공개 채널 API에서 실시간으로 가져온 프로필 사진이고(실패 시 로컬 이미지로 폴백), 클릭하면 chzzk 방송 페이지로 바로 이동해요.
 - **카메라로 QR 인식**은 브라우저 보안 정책상 HTTPS(또는 localhost)에서만 동작해요.
 - 팔로우/구독 정보는 치지직의 공개 프로필 카드 API를 매 조회마다 실시간으로 읽어와 캐싱하는 방식이라, 클라이언트가 값을 조작해서 위조할 수 없어요.
 
@@ -123,3 +127,7 @@ npm run dev
 | GET | `/me/shares` | 내가 발급한 공유 카드 목록 (인증 필요) |
 | DELETE | `/me/shares/:id` | 공유 카드 취소 (인증 필요) |
 | POST | `/verify/batch` | 인증ID 목록 일괄 조건 확인 (인증 필요) |
+| GET | `/push/vapid-public-key` | 푸시 구독에 필요한 VAPID 공개키 |
+| POST | `/push/subscribe` | 특정 스텔라 방송 시작 알림 구독 등록 (인증 필요) |
+| DELETE | `/push/subscribe` | 알림 구독 해제 (인증 필요) |
+| POST | `/webhooks/broadcast-started` | `stellar_status`가 호출하는 방송 시작 웹훅 (공유 시크릿) |

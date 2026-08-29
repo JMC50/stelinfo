@@ -30,6 +30,26 @@ db.exec(`
         revoked_at TEXT,
         UNIQUE (channel_id, stellar_id)
     );
+
+    -- One row per browser's push subscription (endpoint is unique per
+    -- browser install, so it doubles as the natural primary key).
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+        endpoint TEXT PRIMARY KEY,
+        channel_id TEXT NOT NULL,
+        p256dh TEXT NOT NULL,
+        auth TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    -- Which stellars a given subscription wants "방송 시작" alerts for.
+    -- No formal FK (this project doesn't use them elsewhere either) —
+    -- cleanup happens in application code alongside the subscription row.
+    CREATE TABLE IF NOT EXISTS push_subscription_topics (
+        endpoint TEXT NOT NULL,
+        stellar_id TEXT NOT NULL,
+        PRIMARY KEY (endpoint, stellar_id)
+    );
 `);
 
 // x_id was added after the users table already shipped — backfill it for

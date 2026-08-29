@@ -93,6 +93,7 @@
 <nav class="desktop-nav" aria-label="바로가기">
 	<button class="nav-link" onclick={() => go('/mypage')}>마이페이지</button>
 	<button class="nav-link" onclick={() => go('/verify')}>인증 확인</button>
+	<button class="nav-link" onclick={() => go('/notifications')}>알림 설정</button>
 	<button class="nav-link nav-link--danger" onclick={handleLogout}>로그아웃</button>
 </nav>
 
@@ -133,6 +134,7 @@
 	<div class="menu-items">
 		<button class="menu-item" onclick={() => go('/mypage')}>마이페이지</button>
 		<button class="menu-item" onclick={() => go('/verify')}>인증 확인</button>
+		<button class="menu-item" onclick={() => go('/notifications')}>알림 설정</button>
 		<button class="menu-item menu-item--danger" onclick={handleLogout}>로그아웃</button>
 	</div>
 </nav>
