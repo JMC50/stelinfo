@@ -4,7 +4,6 @@
 	import { pwaInfo } from 'virtual:pwa-info';
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import { auth } from '$lib/state/auth.svelte';
-	import RotateHint from '$lib/components/RotateHint.svelte';
 	import { dev } from '$app/environment';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 
@@ -28,8 +27,6 @@
 	<link rel="apple-touch-icon" href="/icons/icon.png" />
 	{@html webManifestLink}
 </svelte:head>
-
-<RotateHint />
 
 <main class="app-shell">
 	{@render children()}
