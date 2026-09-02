@@ -69,6 +69,14 @@ async function getChzzkChannelImage(channelId: string): Promise<string | null> {
     }
 }
 
+// How long the push service should hold a notification for a
+// currently-unreachable device (PC asleep/off, phone offline) before giving
+// up on it. Without this, the default TTL is effectively "hold indefinitely",
+// so turning a PC back on hours later dumps every stale "방송 시작" alert at
+// once -- a "방금 켰다"-style notification for a stream that started long
+// ago isn't useful, so it's better dropped than delivered late.
+const NOTIFICATION_TTL_SECONDS = 10 * 60;
+
 /**
  * Sends `payload` to every given subscription. Expired/invalid ones
  * (410/404 — the browser or user revoked them) are pruned as they're
@@ -79,7 +87,9 @@ async function sendToSubscribers(subscribers: PushSubscriptionRow[], payload: st
     if (subscribers.length === 0) return;
 
     const results = await Promise.allSettled(
-        subscribers.map((sub) => webpush.sendNotification(toWebPushSubscription(sub), payload))
+        subscribers.map((sub) =>
+            webpush.sendNotification(toWebPushSubscription(sub), payload, { TTL: NOTIFICATION_TTL_SECONDS })
+        )
     );
 
     results.forEach((result, i) => {
