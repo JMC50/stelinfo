@@ -17,7 +17,27 @@
 		loadingId: string | null;
 	} = $props();
 
-	const columns = 3;
+	const columns = 4;
+
+	// Debut generations: the first 3 (Gangzi, Ayatsuno_yuni, Sakihane_huya)
+	// share a row, everyone after is grouped 4-per-row — each group starts
+	// its own grid row rather than wrapping wherever the flat column count
+	// happens to land, so a generation's members always line up together.
+	function groupByGeneration(list: StellarProfile[]): StellarProfile[][] {
+		const groups: StellarProfile[][] = [];
+		let i = 0;
+		if (list.length > 0) {
+			groups.push(list.slice(0, 3));
+			i = 3;
+		}
+		while (i < list.length) {
+			groups.push(list.slice(i, i + columns));
+			i += columns;
+		}
+		return groups;
+	}
+
+	let groups = $derived(groupByGeneration(stellars));
 </script>
 
 <section class="select-screen">
@@ -38,15 +58,19 @@
 			<p class="select-desc">선택한 스텔라와의 팔로우・구독 기록과 정보를 보여드려요.</p>
 		</header>
 
-		<div class="stellar-grid">
-			{#each stellars as s, i (s.id)}
-				<StellarTile
-					stellar={s}
-					loading={loadingId === s.id}
-					disabled={loadingId !== null}
-					delayMs={Math.floor(i / columns) * 70 + (i % columns) * 25}
-					onSelect={() => onSelect(s.id)}
-				/>
+		<div class="stellar-groups">
+			{#each groups as group, g (group[0]?.id ?? g)}
+				<div class="stellar-grid">
+					{#each group as s, j (s.id)}
+						<StellarTile
+							stellar={s}
+							loading={loadingId === s.id}
+							disabled={loadingId !== null}
+							delayMs={g * 70 + j * 25}
+							onSelect={() => onSelect(s.id)}
+						/>
+					{/each}
+				</div>
 			{/each}
 		</div>
 	</div>
@@ -140,11 +164,17 @@
 		animation: fade-up 0.3s ease-out 100ms both;
 	}
 
-	.stellar-grid {
+	.stellar-groups {
 		margin-top: 22px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.stellar-grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 16px 12px;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 16px 10px;
 	}
 
 	@keyframes fade-up {
@@ -196,10 +226,21 @@
 			font-size: 14px;
 		}
 
-		.stellar-grid {
+		/* Desktop keeps the original flat grid (no per-generation rows): the
+		   group wrapper collapses out of layout via display:contents, which
+		   promotes each .stellar-grid's StellarTile children to be direct
+		   items of .stellar-groups — so .stellar-groups itself becomes the
+		   single grid they all auto-fill-wrap in, same as before grouping
+		   was added, with no DOM duplication needed to get back to it. */
+		.stellar-groups {
 			margin-top: 32px;
+			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
 			gap: 28px 20px;
+		}
+
+		.stellar-grid {
+			display: contents;
 		}
 	}
 </style>
