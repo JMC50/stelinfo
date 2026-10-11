@@ -107,6 +107,13 @@
 	) {
 		const ordered = randomize ? shuffle(list) : list;
 		const cols = 5;
+		// Rows actually needed for however many stellars there are — was
+		// hardcoded to assume 2 rows (canvasH / 2), which silently overflowed
+		// the fallback canvas's height as soon as the roster grew past
+		// 2 * cols items (a 3rd row landed outside canvasH entirely). That
+		// row was easy to miss with only one stellar in it; with more of the
+		// roster landing there it became an obvious scroll-causing overflow.
+		const rows = Math.ceil(ordered.length / cols);
 		const placed: { cx: number; cy: number; size: number }[] = [];
 		const gap = gapFor(canvasW, canvasH);
 
@@ -119,11 +126,11 @@
 				({ cx, cy, size } = scatterPosition(baseSize, canvasW, canvasH, placed, gap));
 			} else {
 				// Deterministic grid for the SSR-rendered first paint.
-				size = Math.min(canvasW, canvasH) * 0.12;
+				size = Math.min(canvasW, canvasH / rows) * 0.12;
 				const col = i % cols;
 				const row = Math.floor(i / cols);
 				cx = (col + 0.5) * (canvasW / cols);
-				cy = (row + 0.5) * (canvasH / 2);
+				cy = (row + 0.5) * (canvasH / rows);
 			}
 			placed.push({ cx, cy, size });
 
