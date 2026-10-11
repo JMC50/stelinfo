@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { PUBLIC_SERVER_URL } from '$env/static/public';
+	import { badgeImageUrl } from '$lib/badge';
 	import type { ChzzkUser, StellarLinks, StellarYoutubeSummary, StreamerInfo } from '$lib/types';
 	import ShareModal from '$lib/components/ShareModal.svelte';
 	import StellarShortcutRow from '$lib/components/StellarShortcutRow.svelte';
@@ -24,6 +25,15 @@
 
 	let isFollowing = $derived(!!info.follow_date);
 	let isSubscribed = $derived(info.subscribe_month > 0);
+	// Subscription tier badge shown alongside the activated viewer badges —
+	// it's never itself in `badges` (Chzzk returns it separately), so it's
+	// unshifted to the front to read as "the" badge row rather than a
+	// visually separate thing.
+	let allBadges = $derived(
+		info.subscription_badge
+			? [{ imageUrl: info.subscription_badge.imageUrl, title: info.subscription_badge.title, description: null }, ...info.badges]
+			: info.badges
+	);
 	let followDays = $derived(info.follow_date ? daysSince(info.follow_date) : null);
 	// info.follow_date arrives as "YYYY-MM-DD HH:mm:ss" — only the date part
 	// reads naturally in "...부터" ("since ...").
@@ -110,6 +120,19 @@
 					<span class="pill-sub">&nbsp;</span>
 				</div>
 			</div>
+
+			{#if allBadges.length > 0}
+				<div class="badge-row">
+					{#each allBadges as badge (badge.imageUrl)}
+						<img
+							class="badge-chip"
+							src={badgeImageUrl(badge.imageUrl)}
+							alt={badge.title}
+							title={badge.description ? `${badge.title} · ${badge.description}` : badge.title}
+						/>
+					{/each}
+				</div>
+			{/if}
 
 			<div class="info-card info-card--user">
 				<h2>유저 정보</h2>
@@ -325,6 +348,24 @@
 		margin-top: 3px;
 		font-size: 10px;
 		color: var(--color-text-muted);
+	}
+
+	.badge-row {
+		margin-top: 10px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		justify-content: center;
+		opacity: 0;
+		animation: fade-up 0.3s ease-out 0.2s both;
+	}
+
+	.badge-chip {
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		object-fit: cover;
+		box-shadow: 0 2px 6px rgba(134, 127, 219, 0.2);
 	}
 
 	.info-card {

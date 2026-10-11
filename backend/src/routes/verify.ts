@@ -1,7 +1,7 @@
 import express from "express";
 import { requireAuth } from "../auth";
 import db from "../db";
-import { normalizeShareId } from "../shares";
+import { normalizeShareId, refreshShare } from "../shares";
 import { getStreamerInfo } from "../streamerInfo";
 
 export const verifyRouter = express.Router();
@@ -10,6 +10,7 @@ const MAX_IDS_PER_REQUEST = 200;
 
 interface ShareWithOwner {
     id: string;
+    channel_id: string;
     stellar_id: string;
     claimed_handle: string;
     follow_date: string | null;
@@ -18,8 +19,8 @@ interface ShareWithOwner {
 }
 
 const lookupStmt = db.prepare(`
-    SELECT shares.id, shares.stellar_id, shares.claimed_handle, shares.follow_date, shares.subscribe_month,
-           users.channel_name
+    SELECT shares.id, shares.channel_id, shares.stellar_id, shares.claimed_handle, shares.follow_date,
+           shares.subscribe_month, users.channel_name
     FROM shares
     JOIN users ON users.channel_id = shares.channel_id
     WHERE shares.id = ? AND shares.revoked_at IS NULL
@@ -37,7 +38,7 @@ function followDaysSince(followDate: string): number {
     return Math.round((today - startDay) / 86_400_000) + 1;
 }
 
-verifyRouter.post("/verify/batch", requireAuth, (req, res) => {
+verifyRouter.post("/verify/batch", requireAuth, async (req, res) => {
     const { ids, minFollowDays, minSubscribeMonths, stellarId } = req.body ?? {};
 
     if (!Array.isArray(ids) || ids.some((id) => typeof id !== "string")) {
@@ -59,8 +60,17 @@ verifyRouter.post("/verify/batch", requireAuth, (req, res) => {
     // different member's giveaway doesn't quietly pass.
     const requiredStellarId = typeof stellarId === "string" && stellarId ? stellarId : null;
 
-    const results = ids.map((id) => {
-        const share = lookupStmt.get(normalizeShareId(id)) as ShareWithOwner | undefined;
+    // Refresh each matched share's snapshot before scoring, so a code
+    // checked long after it was shared still reflects current follow/
+    // subscribe status rather than whatever it looked like at share time.
+    const lookups = await Promise.all(
+        ids.map(async (id) => {
+            const share = lookupStmt.get(normalizeShareId(id)) as ShareWithOwner | undefined;
+            return share ? [id, await refreshShare(share)] as const : [id, undefined] as const;
+        })
+    );
+
+    const results = lookups.map(([id, share]) => {
         if (!share) {
             return { id, found: false as const };
         }

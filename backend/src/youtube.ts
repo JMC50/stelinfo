@@ -67,6 +67,23 @@ export const stellarYoutubeConfig: Record<string, StellarYoutubeConfig> = {
     Sakihane_huya: {
         handle: "@Sakihanechannel",
         musicPlaylists: ["PL3rF5rqFNO48ZMgPuZ6XbQ1J9IT3TQtcs"]
+    },
+    // No uploads yet (debuted 2026-10-11) — fill in musicPlaylists once available.
+    Shizuki_Toa: {
+        handle: "@ShizukiToa",
+        musicPlaylists: []
+    },
+    Cogane_Rang: {
+        handle: "@coganerang",
+        musicPlaylists: []
+    },
+    Hanayo_Hiyori: {
+        handle: "@HanayoHiyori",
+        musicPlaylists: []
+    },
+    Tokino_Mary: {
+        handle: "@TokinoMaryChannel",
+        musicPlaylists: []
     }
 };
 

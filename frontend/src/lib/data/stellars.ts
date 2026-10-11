@@ -158,5 +158,61 @@ export const stellars: StellarProfile[] = [
 			youtube: 'https://www.youtube.com/@yuzuhariko',
 			cafe: 'https://cafe.naver.com/tteokbokk1'
 		}
+	},
+	{
+		id: 'Shizuki_Toa',
+		image: '/images/stellars/Shizuki_Toa.webp',
+		korName: '시즈키 토아',
+		engName: 'Shizuki Toa',
+		shortName: '토아',
+		color: '#382A6A',
+		links: {
+			chzzk: 'https://chzzk.naver.com/live/2299fad4bebb504b0978e1ec08b2f7d3',
+			x: 'https://x.com/ShizukiToa_',
+			youtube: 'https://www.youtube.com/@ShizukiToa',
+			cafe: 'https://cafe.naver.com/f-e/cafes/29424353/menus/429?viewType=L'
+		}
+	},
+	{
+		id: 'Cogane_Rang',
+		image: '/images/stellars/Cogane_Rang.webp',
+		korName: '코가네 랑',
+		engName: 'Cogane Rang',
+		shortName: '랑',
+		color: '#C19731',
+		links: {
+			chzzk: 'https://chzzk.naver.com/live/c657aa3592260a2b59669a72ec151936',
+			x: 'https://x.com/CoganeRang',
+			youtube: 'https://www.youtube.com/@coganerang',
+			cafe: 'https://cafe.naver.com/f-e/cafes/29424353/menus/430'
+		}
+	},
+	{
+		id: 'Hanayo_Hiyori',
+		image: '/images/stellars/Hanayo_Hiyori.webp',
+		korName: '하나요 히요리',
+		engName: 'Hanayo Hiyori',
+		shortName: '히요리',
+		color: '#F89BBD',
+		links: {
+			chzzk: 'https://chzzk.naver.com/live/49d2c3cf8f0b2843d934ec15e82bb54c',
+			x: 'https://x.com/HanayoHiyori',
+			youtube: 'https://www.youtube.com/@HanayoHiyori',
+			cafe: 'https://cafe.naver.com/f-e/cafes/29424353/menus/431'
+		}
+	},
+	{
+		id: 'Tokino_Mary',
+		image: '/images/stellars/Tokino_Mary.webp',
+		korName: '토키노 메리',
+		engName: 'Tokino Mary',
+		shortName: '메리',
+		color: '#EFD06E',
+		links: {
+			chzzk: 'https://chzzk.naver.com/live/792acf9ca28b42918710327e14b06b68',
+			x: 'https://x.com/TokinoMary',
+			youtube: 'https://www.youtube.com/@TokinoMaryChannel',
+			cafe: 'https://cafe.naver.com/f-e/cafes/29424353/menus/432'
+		}
 	}
 ];

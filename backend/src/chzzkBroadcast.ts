@@ -55,3 +55,23 @@ const CHAT_CHANNEL_IDS: Record<string, string> = {
 export function getChatChannelId(stellarId: string): string | null {
     return CHAT_CHANNEL_IDS[stellarId] ?? null;
 }
+
+// Members who haven't broadcast yet — chzzk only assigns a chatChannelId
+// on first stream, so there's nothing to put in CHAT_CHANNEL_IDS for them.
+// chzzkProfile.ts falls back to a different (undocumented) endpoint variant
+// for these: `/profile?streamingChannelId=...` resolves the channel from
+// this raw chzzk channelId instead of a chat channel id, and tolerates a
+// placeholder in the path where the chat channel id would normally go.
+// That behavior isn't documented or guaranteed, so this is a stopgap —
+// once a member's real chatChannelId shows up after their first stream,
+// move their entry to CHAT_CHANNEL_IDS above and delete it from here.
+const PENDING_DEBUT_CHANNEL_IDS: Record<string, string> = {
+    Shizuki_Toa: "2299fad4bebb504b0978e1ec08b2f7d3",
+    Cogane_Rang: "c657aa3592260a2b59669a72ec151936",
+    Hanayo_Hiyori: "49d2c3cf8f0b2843d934ec15e82bb54c",
+    Tokino_Mary: "792acf9ca28b42918710327e14b06b68"
+};
+
+export function getPendingDebutChannelId(stellarId: string): string | null {
+    return PENDING_DEBUT_CHANNEL_IDS[stellarId] ?? null;
+}

@@ -25,6 +25,8 @@ db.exec(`
         claimed_handle TEXT NOT NULL,
         follow_date TEXT,
         subscribe_month INTEGER NOT NULL DEFAULT 0,
+        subscription_badge_json TEXT,
+        badges_json TEXT,
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         updated_at TEXT NOT NULL DEFAULT (datetime('now')),
         revoked_at TEXT,
@@ -57,6 +59,16 @@ db.exec(`
 const userColumns = db.prepare(`PRAGMA table_info(users)`).all() as Array<{ name: string }>;
 if (!userColumns.some((c) => c.name === "x_id")) {
     db.exec(`ALTER TABLE users ADD COLUMN x_id TEXT`);
+}
+
+// Same backfill for shares.subscription_badge_json/badges_json, added
+// after the shares table already shipped.
+const shareColumns = db.prepare(`PRAGMA table_info(shares)`).all() as Array<{ name: string }>;
+if (!shareColumns.some((c) => c.name === "subscription_badge_json")) {
+    db.exec(`ALTER TABLE shares ADD COLUMN subscription_badge_json TEXT`);
+}
+if (!shareColumns.some((c) => c.name === "badges_json")) {
+    db.exec(`ALTER TABLE shares ADD COLUMN badges_json TEXT`);
 }
 
 export default db;

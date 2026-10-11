@@ -1,7 +1,15 @@
 import express from "express";
 import { requireAuth, type UserRow } from "../auth";
 import { getFollowSubscribeInfo } from "../chzzkProfile";
-import { getShareById, listSharesByChannel, revokeShare, upsertShare } from "../shares";
+import {
+    getShareById,
+    listSharesByChannel,
+    parseBadges,
+    parseSubscriptionBadge,
+    refreshShare,
+    revokeShare,
+    upsertShare
+} from "../shares";
 import { getStreamerInfo } from "../streamerInfo";
 import { setUserXId } from "../users";
 
@@ -15,6 +23,8 @@ function serializeShare(share: {
     claimed_handle: string;
     follow_date: string | null;
     subscribe_month: number;
+    subscription_badge_json: string | null;
+    badges_json: string | null;
     created_at: string;
     updated_at: string;
 }) {
@@ -26,6 +36,8 @@ function serializeShare(share: {
         claimedHandle: share.claimed_handle,
         followDate: share.follow_date,
         subscribeMonth: share.subscribe_month,
+        subscriptionBadge: parseSubscriptionBadge(share.subscription_badge_json),
+        badges: parseBadges(share.badges_json),
         createdAt: share.created_at,
         updatedAt: share.updated_at
     };
@@ -64,7 +76,9 @@ shareRouter.post(
                 stellarId,
                 claimedHandle,
                 followDate: followSubscribe?.followDate ?? null,
-                subscribeMonth: followSubscribe?.subscribeMonths ?? 0
+                subscribeMonth: followSubscribe?.subscribeMonths ?? 0,
+                subscriptionBadge: followSubscribe?.subscriptionBadge ?? null,
+                badges: followSubscribe?.badges ?? []
             });
             // Remembered per-user (not per-share) so the next share form —
             // for any stellar — starts pre-filled with whatever was typed
@@ -81,21 +95,21 @@ shareRouter.post(
     }
 );
 
-shareRouter.get("/share/:id", (req: express.Request<{ id: string }>, res) => {
+shareRouter.get("/share/:id", async (req: express.Request<{ id: string }>, res) => {
     const share = getShareById(req.params.id);
     if (!share || share.revoked_at) {
         res.status(404).json({ error: "share not found" });
         return;
     }
-    res.json(serializeShare(share));
+    const fresh = await refreshShare(share);
+    res.json(serializeShare(fresh));
 });
 
-shareRouter.get("/me/shares", requireAuth, (_req, res) => {
+shareRouter.get("/me/shares", requireAuth, async (_req, res) => {
     const user = res.locals.user as UserRow;
-    const shares = listSharesByChannel(user.channel_id)
-        .filter((s) => !s.revoked_at)
-        .map(serializeShare);
-    res.json(shares);
+    const shares = listSharesByChannel(user.channel_id).filter((s) => !s.revoked_at);
+    const refreshed = await Promise.all(shares.map(refreshShare));
+    res.json(refreshed.map(serializeShare));
 });
 
 shareRouter.delete("/me/shares/:id", requireAuth, (req: express.Request<{ id: string }>, res) => {

@@ -35,6 +35,21 @@ export interface StellarYoutubeSummary {
 	latestMusicVideo: YoutubeVideoSummary | null;
 }
 
+export interface SubscriptionBadge {
+	imageUrl: string;
+	title: string;
+}
+
+// Covers both channel-scoped badges (donation milestones, founder badges,
+// subscription-gifting badges, ...) and platform-wide ones — same shape.
+export interface ViewerBadge {
+	badgeId: string;
+	imageUrl: string;
+	title: string;
+	description: string | null;
+	scope: string;
+}
+
 export interface ShareRecord {
 	id: string;
 	stellarId: string;
@@ -42,6 +57,8 @@ export interface ShareRecord {
 	claimedHandle: string;
 	followDate: string | null;
 	subscribeMonth: number;
+	subscriptionBadge: SubscriptionBadge | null;
+	badges: ViewerBadge[];
 	createdAt: string;
 	updatedAt: string;
 }
@@ -75,4 +92,6 @@ export interface StreamerInfo {
 	stellar_short_name: string;
 	subscribe_month: number;
 	text_HEX: string;
+	subscription_badge: SubscriptionBadge | null;
+	badges: ViewerBadge[];
 }

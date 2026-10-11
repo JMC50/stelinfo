@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import { FRONTEND_URL, PORT } from "./config";
 import { authRouter } from "./routes/auth";
+import { badgeImageRouter } from "./routes/badgeImage";
 import { pushRouter } from "./routes/push";
 import { shareRouter } from "./routes/share";
 import { streamerRouter } from "./routes/streamer";
@@ -24,6 +25,7 @@ app.get("/health", async (req, res) => {
 });
 
 app.use(authRouter);
+app.use(badgeImageRouter);
 app.use(streamerRouter);
 app.use(shareRouter);
 app.use(verifyRouter);

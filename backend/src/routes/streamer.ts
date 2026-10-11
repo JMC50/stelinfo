@@ -34,7 +34,9 @@ streamerRouter.get("/streamer-info/:stellarId", requireAuth, async (req: express
         last_stream_url: broadcast?.url ?? "",
         is_live: broadcast?.isLive ?? false,
         follow_date: followSubscribe?.followDate ?? null,
-        subscribe_month: followSubscribe?.subscribeMonths ?? 0
+        subscribe_month: followSubscribe?.subscribeMonths ?? 0,
+        subscription_badge: followSubscribe?.subscriptionBadge ?? null,
+        badges: followSubscribe?.badges ?? []
     });
 });
 

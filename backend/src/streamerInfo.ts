@@ -113,6 +113,43 @@ const dummyStreamerInfo: Record<string, DummyStreamerInfo> = {
         HEX: "#A6D0A6",
         stellar_short_name: "리코",
         text_HEX: "#000000"
+    },
+    // oshimark/oshimark1 TBD — not yet revealed as of debut (2026-10-11)
+    Shizuki_Toa: {
+        memberName: "시즈키 토아",
+        stellar: "Shizuki Toa",
+        oshimark: "",
+        oshimark1: "",
+        HEX: "#382A6A",
+        stellar_short_name: "토아",
+        text_HEX: "#FFFFFF"
+    },
+    Cogane_Rang: {
+        memberName: "코가네 랑",
+        stellar: "Cogane Rang",
+        oshimark: "",
+        oshimark1: "",
+        HEX: "#C19731",
+        stellar_short_name: "랑",
+        text_HEX: "#000000"
+    },
+    Hanayo_Hiyori: {
+        memberName: "하나요 히요리",
+        stellar: "Hanayo Hiyori",
+        oshimark: "",
+        oshimark1: "",
+        HEX: "#F89BBD",
+        stellar_short_name: "히요리",
+        text_HEX: "#000000"
+    },
+    Tokino_Mary: {
+        memberName: "토키노 메리",
+        stellar: "Tokino Mary",
+        oshimark: "",
+        oshimark1: "",
+        HEX: "#EFD06E",
+        stellar_short_name: "메리",
+        text_HEX: "#000000"
     }
 };
 

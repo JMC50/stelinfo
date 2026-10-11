@@ -3,6 +3,7 @@
 	import QRCode from 'qrcode';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { fade, scale } from 'svelte/transition';
+	import { badgeImageUrl } from '$lib/badge';
 	import { auth } from '$lib/state/auth.svelte';
 	import { createShare, revokeShare } from '$lib/state/shareApi';
 	import type { ShareRecord } from '$lib/types';
@@ -91,6 +92,18 @@
 		share ? new Date(share.updatedAt.replace(' ', 'T') + 'Z').toLocaleDateString('ko-KR') : ''
 	);
 
+	// Same merge InfoDetail.svelte does: the subscription tier badge isn't
+	// itself in `badges`, so it's unshifted to the front to read as one row.
+	let allBadges = $derived.by(() => {
+		if (!share) return [];
+		return share.subscriptionBadge
+			? [
+					{ imageUrl: share.subscriptionBadge.imageUrl, title: share.subscriptionBadge.title, description: null },
+					...share.badges
+				]
+			: share.badges;
+	});
+
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 		const trimmed = handle.trim().replace(/^@/, '');
@@ -135,8 +148,15 @@
 			// pixelRatio 3 matches typical phone screen density (source
 			// avatar art and the QR above are both high-res enough to hold
 			// up at this scale without softening).
-			await toPng(cardEl, { pixelRatio: 4 });
-			const dataUrl = await toPng(cardEl, { pixelRatio: 4 });
+			// includeQueryParams: without it, html-to-image's internal
+			// image cache keys only on the URL's path — every badge here is
+			// fetched from the same `/badge-image?url=...` proxy path with
+			// just the query differing, so every badge collapsed onto
+			// whichever one was embedded first. (github.com/bubkoo/html-to-image,
+			// dataurl.ts's getCacheKey.)
+			const toPngOptions = { pixelRatio: 4, includeQueryParams: true };
+			await toPng(cardEl, toPngOptions);
+			const dataUrl = await toPng(cardEl, toPngOptions);
 			const link = document.createElement('a');
 			link.download = `stelinfo-${stellarId}-${share?.id}.png`;
 			link.href = dataUrl;
@@ -237,6 +257,14 @@
 						<strong>{share.subscribeMonth > 0 ? `${share.subscribeMonth}개월째` : '미구독'}</strong>
 					</div>
 				</div>
+
+				{#if allBadges.length > 0}
+					<div class="card-badges">
+						{#each allBadges as badge (badge.imageUrl)}
+							<img class="card-badge-chip" src={badgeImageUrl(badge.imageUrl)} alt={badge.title} title={badge.title} />
+						{/each}
+					</div>
+				{/if}
 
 				<div class="card-footer">
 					<div class="card-footer-info">
@@ -591,6 +619,23 @@
 		margin-top: 2px;
 		font-size: 15px;
 		font-weight: 800;
+	}
+
+	.card-badges {
+		position: relative;
+		margin-top: 10px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 5px;
+		justify-content: center;
+	}
+
+	.card-badge-chip {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		object-fit: cover;
+		background: rgba(255, 255, 255, 0.85);
 	}
 
 	.card-footer {
