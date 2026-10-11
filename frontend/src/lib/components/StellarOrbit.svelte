@@ -459,6 +459,19 @@
 		   page taller than the viewport on short screens. min-height:0 lets
 		   it shrink to fill exactly whatever space is actually left. */
 		min-height: 0;
+		/* Avatar size/position is computed once against the container size
+		   measured right after mount (see hasRandomized) and never
+		   recalculated after that — if the real viewport height settles to
+		   something smaller later (observed after a reload in a PWA; likely
+		   a dvh recalculation racing the measurement), those now-stale,
+		   fixed-px avatars can sit past this box's edge. Since they're
+		   position:absolute, that doesn't grow .orbit's own layout size, but
+		   with nothing clipping them it does grow the page's scrollable
+		   area. Clip here instead of letting that become a page-level
+		   scrollbar — this box is exactly the space this component is meant
+		   to fill, so there's nothing meaningful being hidden on the
+		   boundary.  */
+		overflow: hidden;
 		margin: 20px 0;
 	}
 
