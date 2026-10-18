@@ -49,7 +49,11 @@ const CHAT_CHANNEL_IDS: Record<string, string> = {
     Tenko_shibuki: "N2dc9q",
     Aokumo_rin: "N2dc1n",
     Hanako_nana: "N2dL07",
-    Yuzuha_riko: "N2db7a"
+    Yuzuha_riko: "N2db7a",
+    Shizuki_Toa: "N2oK4A",
+    Cogane_Rang: "N2oKTR",
+    Hanayo_Hiyori: "N2oRiA",
+    Tokino_Mary: "N2oS8N"
 };
 
 export function getChatChannelId(stellarId: string): string | null {
@@ -66,10 +70,9 @@ export function getChatChannelId(stellarId: string): string | null {
 // once a member's real chatChannelId shows up after their first stream,
 // move their entry to CHAT_CHANNEL_IDS above and delete it from here.
 const PENDING_DEBUT_CHANNEL_IDS: Record<string, string> = {
-    Shizuki_Toa: "2299fad4bebb504b0978e1ec08b2f7d3",
-    Cogane_Rang: "c657aa3592260a2b59669a72ec151936",
-    Hanayo_Hiyori: "49d2c3cf8f0b2843d934ec15e82bb54c",
-    Tokino_Mary: "792acf9ca28b42918710327e14b06b68"
+    // Empty until the next member debuts — Shizuki_Toa/Cogane_Rang/
+    // Hanayo_Hiyori/Tokino_Mary all moved up to CHAT_CHANNEL_IDS once their
+    // first broadcast assigned them a real chatChannelId.
 };
 
 export function getPendingDebutChannelId(stellarId: string): string | null {
